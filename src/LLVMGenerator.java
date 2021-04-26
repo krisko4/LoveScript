@@ -29,7 +29,7 @@ public class LLVMGenerator {
             main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @strs, i32 0, i32 0), i32* %" + (id) + ")\n";
         }
         else{
-            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @strs, i32 0, i32 0), double* %" + (id) + ")\n";
+            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strdd, i32 0, i32 0), double* %" + (id) + ")\n";
         }
         String lineNo = "%" + reg;
         reg++;
@@ -80,6 +80,7 @@ public class LLVMGenerator {
         text += "@strpi = constant [4 x i8] c\"%d\\0A\\00\"\n";
         text += "@strpd = constant [4 x i8] c\"%f\\0A\\00\"\n";
         text += "@strs = constant [3 x i8] c\"%d\\00\"\n";
+        text += "@strdd = constant [4 x i8] c\"%lf\\00\"\n";
         text += header_text;
         text += "define i32 @main() nounwind{\n";
         text += main_text;
@@ -301,6 +302,27 @@ public class LLVMGenerator {
 
     public static String multiplyIntAndReal(String val) {
         main_text += "%" + reg + " = fmul double " + val + ",%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideIntAndReal(String val) {
+        main_text += "%" + reg + " = fdiv double " + val + "," + "%" + (reg - 1)  + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideTwoDoubles(String val2, String val1) {
+        main_text += "%" + reg + " = fdiv double " + val2 + "," + val1 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideTwoIntegers() {
+        main_text += "%" + reg + " = fdiv double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
         String lineNo = "%" + reg;
         reg++;
         return lineNo;

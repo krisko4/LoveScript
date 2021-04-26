@@ -97,16 +97,12 @@ public class LLVMActions extends HelloBaseListener {
             }
         }
         LLVMGenerator.assign(ID, value.name, value.type);
-   //     if (ctx. != null | ctx.subtract_expression() != null) {
-      //      LLVMGenerator.assign1(ID, value.type);
-    //    } else {
-     //       LLVMGenerator.assign(ID, value.name, value.type);
-    //    }
+
     }
 
 
     @Override
-    public void exitMult(HelloParser.MultContext ctx) {
+    public void exitMul(HelloParser.MulContext ctx) {
         Value value1 = stack.pop();
         Value value2 = stack.pop();
         VarType varType;
@@ -132,7 +128,7 @@ public class LLVMActions extends HelloBaseListener {
 
 
     @Override
-    public void exitAdd_expression(HelloParser.Add_expressionContext ctx) {
+    public void exitAdd(HelloParser.AddContext ctx) {
         VarType varType;
         String lineNo;
         Value value1 = stack.pop();
@@ -157,53 +153,36 @@ public class LLVMActions extends HelloBaseListener {
     }
 
 
-  /*  public boolean addValues(List<Value> valueList) {
-        VarType varType;
-        boolean real = false;
-        Value value1 = valueList.get(0);
-        Value value2 = valueList.get(1);
+    @Override
+    public void exitDivide(HelloParser.DivideContext ctx) {
+        Value value2 = stack.pop();
+        Value value1 = stack.pop();
+        VarType varType = VarType.REAL;
         String lineNo;
-        stack.clear();
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            varType = VarType.REAL;
-            real = true;
             if (value1.type == VarType.INT) {
                 LLVMGenerator.sitofp(value1.name);
-                lineNo = LLVMGenerator.addIntAndReal(value2.name);
+                lineNo = LLVMGenerator.divideIntAndReal(value2.name);
             } else if (value2.type == VarType.INT) {
                 LLVMGenerator.sitofp(value2.name);
-                lineNo = LLVMGenerator.addIntAndReal(value1.name);
+                lineNo = LLVMGenerator.divideIntAndReal(value1.name);
             } else {
-                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name);
+                lineNo = LLVMGenerator.divideTwoDoubles(value1.name, value2.name);
             }
         } else {
-            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name);
+            LLVMGenerator.sitofp(value1.name);
+            LLVMGenerator.sitofp(value2.name);
+            lineNo = LLVMGenerator.divideTwoIntegers();
         }
-        for (int i = 2; i < valueList.size(); i++) {
-            Value val = valueList.get(i);
-            if (val.type == VarType.INT && real) {
-                LLVMGenerator.sitofp(val.name);
-                lineNo = LLVMGenerator.addMultiple(val.name, VarType.INT);
-            } else if (real) {
-                lineNo = LLVMGenerator.addMultiple(val.name, VarType.REAL);
-            } else {
-                lineNo = LLVMGenerator.addMultiple1(val.name);
-            }
+        Value value = new Value(lineNo, varType);
+        stack.push(value);
+    }
 
-        }
-        if (real) {
-            stack.push(new Value(lineNo, VarType.REAL));
-        } else {
 
-            stack.push(new Value(lineNo, VarType.INT));
-        }
-
-        return real;
-    }*/
 
 
     @Override
-    public void exitSubtract_expression(HelloParser.Subtract_expressionContext ctx) {
+    public void exitSub(HelloParser.SubContext ctx) {
         Value value1 = stack.pop();
         Value value2 = stack.pop();
         VarType varType;
@@ -227,55 +206,6 @@ public class LLVMActions extends HelloBaseListener {
         stack.push(value);
 
 
-     /*   List<Value> valueList = new ArrayList<>(stack);
-        stack.clear();
-        boolean real = false;
-        String lineNo;
-        if (valueList.size() == 2) {
-            Value value1 = valueList.get(0);
-            Value value2 = valueList.get(1);
-            if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-                real = true;
-                if (value1.type == VarType.INT) {
-                    LLVMGenerator.sitofp(value1.name);
-                    lineNo = LLVMGenerator.subIntFromReal(value2.name);
-                } else if (value2.type == VarType.INT) {
-                    LLVMGenerator.sitofp(value2.name);
-                    lineNo = LLVMGenerator.subIntFromReal1(value1.name);
-                } else {
-                    lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name);
-                }
-            } else {
-                lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name);
-            }
-
-        } else {
-            Value lastVal = valueList.get(valueList.size() - 1);
-            valueList.remove(lastVal);
-            real = addValues(valueList);
-            Value sumValue = stack.pop();
-            if (real) {
-                if (lastVal.type == VarType.INT) {
-                    LLVMGenerator.sitofp(lastVal.name);
-                    lineNo = LLVMGenerator.subDoublesFromDouble();
-                } else {
-                    lineNo = LLVMGenerator.subDoublesFromDouble(lastVal.name);
-                }
-            } else {
-                if (lastVal.type == VarType.INT) {
-                    lineNo = LLVMGenerator.subIntsFromInt(lastVal.name);
-                } else {
-                    LLVMGenerator.sitofp(sumValue.name);
-                    lineNo = LLVMGenerator.subDoublesFromDouble(lastVal.name);
-                    real = true;
-                }
-            }
-        }
-        if (real) {
-            stack.push(new Value(lineNo, VarType.REAL));
-        } else {
-            stack.push(new Value(lineNo, VarType.INT));
-        }*/
     }
 
 

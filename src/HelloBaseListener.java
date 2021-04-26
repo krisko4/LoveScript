@@ -75,37 +75,37 @@ public class HelloBaseListener implements HelloListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(HelloParser.ExpressionContext ctx) { }
+	@Override public void enterAdd(HelloParser.AddContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(HelloParser.ExpressionContext ctx) { }
+	@Override public void exitAdd(HelloParser.AddContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAdd_expression(HelloParser.Add_expressionContext ctx) { }
+	@Override public void enterSub(HelloParser.SubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAdd_expression(HelloParser.Add_expressionContext ctx) { }
+	@Override public void exitSub(HelloParser.SubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMult_divide_expression(HelloParser.Mult_divide_expressionContext ctx) { }
+	@Override public void enterMul(HelloParser.MulContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMult_divide_expression(HelloParser.Mult_divide_expressionContext ctx) { }
+	@Override public void exitMul(HelloParser.MulContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -123,49 +123,13 @@ public class HelloBaseListener implements HelloListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSingleDivide(HelloParser.SingleDivideContext ctx) { }
+	@Override public void enterValue(HelloParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSingleDivide(HelloParser.SingleDivideContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMult(HelloParser.MultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMult(HelloParser.MultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSingleMult(HelloParser.SingleMultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSingleMult(HelloParser.SingleMultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSubtract_expression(HelloParser.Subtract_expressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSubtract_expression(HelloParser.Subtract_expressionContext ctx) { }
+	@Override public void exitValue(HelloParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -226,6 +190,18 @@ public class HelloBaseListener implements HelloListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitString(HelloParser.StringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPriorityExpression(HelloParser.PriorityExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPriorityExpression(HelloParser.PriorityExpressionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -6,20 +6,30 @@ start: ( statement? NEWLINE )*
 
 statement: print_stmt
            | read_stmt
-           | assign_stmt
-           | expression;
+           | assign_stmt;
+     //      | expression;
 
 print_stmt: PRINT val;
 read_stmt: READ TYPE TO ID;
 assign_stmt: ID ASSIGN expression;
 
+expression: val #value
+| expression MULT val #mul
+| expression DIVIDE val #divide
+| expression MINUS expression #sub
+| expression PLUS expression #add
+;
+
+
+
+/*
 expression :  | add_expression
               | mult_expression
               | subtract_expression
               | divide_expression;
 
 add_expression:
-(val | mult_divide_expression) PLUS (val | expression);
+(val | mult_divide_expression) PLUS (val | mult_divide_expression);
 
 mult_divide_expression: mult_expression
                       | divide_expression;
@@ -33,18 +43,19 @@ mult_expression: val MULT (val | expression) #mult
 
 
 subtract_expression: (val | mult_divide_expression) MINUS (val | expression);
-
+*/
 
 val: ID #id
  | INT #int
  | REAL #real
  | ARRAY #array
- | STRING #string;
+ | STRING #string
+ | '(' expression ')' #priorityExpression;
 
 DIVIDE: '/';
 MULT: '*';
 MINUS: ':-';
-PLUS: '+';
+PLUS: ':+';
 STRING : '"' ID '"';
 ASSIGN : '=';
 TYPE: 'INT' | 'REAL';

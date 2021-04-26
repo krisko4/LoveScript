@@ -57,93 +57,65 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitAssign_stmt(HelloParser.Assign_stmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#expression}.
+	 * Enter a parse tree produced by the {@code add}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(HelloParser.ExpressionContext ctx);
+	void enterAdd(HelloParser.AddContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#expression}.
+	 * Exit a parse tree produced by the {@code add}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(HelloParser.ExpressionContext ctx);
+	void exitAdd(HelloParser.AddContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#add_expression}.
+	 * Enter a parse tree produced by the {@code sub}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterAdd_expression(HelloParser.Add_expressionContext ctx);
+	void enterSub(HelloParser.SubContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#add_expression}.
+	 * Exit a parse tree produced by the {@code sub}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitAdd_expression(HelloParser.Add_expressionContext ctx);
+	void exitSub(HelloParser.SubContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#mult_divide_expression}.
+	 * Enter a parse tree produced by the {@code mul}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterMult_divide_expression(HelloParser.Mult_divide_expressionContext ctx);
+	void enterMul(HelloParser.MulContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#mult_divide_expression}.
+	 * Exit a parse tree produced by the {@code mul}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitMult_divide_expression(HelloParser.Mult_divide_expressionContext ctx);
+	void exitMul(HelloParser.MulContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code divide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
 	void enterDivide(HelloParser.DivideContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code divide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
 	void exitDivide(HelloParser.DivideContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code singleDivide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * Enter a parse tree produced by the {@code value}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterSingleDivide(HelloParser.SingleDivideContext ctx);
+	void enterValue(HelloParser.ValueContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code singleDivide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * Exit a parse tree produced by the {@code value}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitSingleDivide(HelloParser.SingleDivideContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code mult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterMult(HelloParser.MultContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code mult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitMult(HelloParser.MultContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code singleMult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterSingleMult(HelloParser.SingleMultContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code singleMult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitSingleMult(HelloParser.SingleMultContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HelloParser#subtract_expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubtract_expression(HelloParser.Subtract_expressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HelloParser#subtract_expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubtract_expression(HelloParser.Subtract_expressionContext ctx);
+	void exitValue(HelloParser.ValueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code id}
 	 * labeled alternative in {@link HelloParser#val}.
@@ -204,4 +176,16 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitString(HelloParser.StringContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code priorityExpression}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void enterPriorityExpression(HelloParser.PriorityExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code priorityExpression}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void exitPriorityExpression(HelloParser.PriorityExpressionContext ctx);
 }

@@ -40,57 +40,40 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssign_stmt(HelloParser.Assign_stmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#expression}.
+	 * Visit a parse tree produced by the {@code add}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression(HelloParser.ExpressionContext ctx);
+	T visitAdd(HelloParser.AddContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#add_expression}.
+	 * Visit a parse tree produced by the {@code sub}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAdd_expression(HelloParser.Add_expressionContext ctx);
+	T visitSub(HelloParser.SubContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#mult_divide_expression}.
+	 * Visit a parse tree produced by the {@code mul}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMult_divide_expression(HelloParser.Mult_divide_expressionContext ctx);
+	T visitMul(HelloParser.MulContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code divide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDivide(HelloParser.DivideContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code singleDivide}
-	 * labeled alternative in {@link HelloParser#divide_expression}.
+	 * Visit a parse tree produced by the {@code value}
+	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSingleDivide(HelloParser.SingleDivideContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code mult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMult(HelloParser.MultContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code singleMult}
-	 * labeled alternative in {@link HelloParser#mult_expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSingleMult(HelloParser.SingleMultContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link HelloParser#subtract_expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSubtract_expression(HelloParser.Subtract_expressionContext ctx);
+	T visitValue(HelloParser.ValueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code id}
 	 * labeled alternative in {@link HelloParser#val}.
@@ -126,4 +109,11 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitString(HelloParser.StringContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code priorityExpression}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPriorityExpression(HelloParser.PriorityExpressionContext ctx);
 }
