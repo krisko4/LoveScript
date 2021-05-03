@@ -1,4 +1,4 @@
-// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/adm/OneDrive - Politechnika Warszawska/Dokumenty/MyCustomLanguage/src\Hello.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

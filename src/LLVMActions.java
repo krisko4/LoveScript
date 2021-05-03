@@ -2,7 +2,7 @@
 
 import java.util.*;
 
-enum VarType {INT, REAL, UNKNOWN}
+enum VarType {INT, REAL, STRING, UNKNOWN}
 
 class Value {
     public String name;
@@ -52,6 +52,9 @@ public class LLVMActions extends HelloBaseListener {
     public void exitReal(HelloParser.RealContext ctx) {
         stack.push(new Value(ctx.REAL().getText(), VarType.REAL));
     }
+
+    @Override
+    public void exitString(HelloParser.StringContext ctx) { stack.push(new Value(ctx.STRING().getText(), VarType.STRING));}
 
 
     @Override

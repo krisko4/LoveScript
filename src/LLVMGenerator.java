@@ -9,70 +9,6 @@ public class LLVMGenerator {
     static int reg = 1;
 
 
- /*   static void load(String id){
-        main_text += "%"+reg+" = load i32, i32* %"+id+"\n";
-        reg++;
-    }*/
-
-    static void printf(VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %" + (reg - 1) + ")\n";
-        } else {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + (reg - 1) + ")\n";
-        }
-        reg++;
-    }
-
-
-    static String scanf(String id, VarType varType) {
-        if(varType == VarType.INT){
-            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @strs, i32 0, i32 0), i32* %" + (id) + ")\n";
-        }
-        else{
-            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strdd, i32 0, i32 0), double* %" + (id) + ")\n";
-        }
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    static void declare(String id, VarType varType) {
-        if(varType == VarType.INT){
-            main_text += "%" + id + " = alloca i32\n";
-        }
-        else{
-            main_text += "%" + id + " = alloca double\n";
-        }
-
-    }
-
-    static String multiplyTwoIntegers(String val1, String val2){
-        main_text += "%"+reg+" = mul i32 "+val1+","+val2+"\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    static String multiplyTwoDoubles(String val1, String val2){
-        main_text += "%"+reg+" = fmul double "+val1+","+val2+"\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-
-    static void assign(String id, String value) {
-        main_text += "store i32 " + value + ", i32* %" + id + "\n";
-    }
-
-    static void assign1(String id, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "store i32 %" + (reg - 1) + ", i32* %" + id + "\n";
-        } else {
-            main_text += "store double %" + (reg - 1) + ", double* %" + id + "\n";
-        }
-    }
-
     static String generate() {
         String text = "";
         text += "declare i32 @printf(i8*, ...)\n";
@@ -96,15 +32,76 @@ public class LLVMGenerator {
 
     }
 
+    static String scanf(String id, VarType varType) {
+        if (varType == VarType.INT) {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @strs, i32 0, i32 0), i32* %" + (id) + ")\n";
+        } else {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strdd, i32 0, i32 0), double* %" + (id) + ")\n";
+        }
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
 
     public static void printf1(String value, VarType varType) {
         if (varType == VarType.INT) {
             main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 " + (value) + ")\n";
             reg++;
-        } else {
+        } else if (varType == VarType.REAL) {
             main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double " + (value) + ")\n";
+            reg++;
+        } else {
+            String text = value.replace("\"", "");
+            header_text += "@.str" + reg + " = private constant [" + text.length() + " x i8] c\"" + text + "\"\n";
+            main_text += "%sup" + reg + " = getelementptr inbounds [" + text.length() + " x i8], [" + text.length() + " x i8]* @.str" + reg + ", i32 0, i32 0\n";
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* %sup" + reg + ")\n";
+            reg++;
         }
 
+    }
+
+    static void declare(String id, VarType varType) {
+        if (varType == VarType.INT) {
+            main_text += "%" + id + " = alloca i32\n";
+        } else {
+            main_text += "%" + id + " = alloca double\n";
+        }
+
+    }
+
+    public static void assign(String id, String name, VarType varType) {
+        if (varType == VarType.INT) {
+            main_text += "store i32 " + name + ", i32* %" + id + "\n";
+            return;
+        }
+        if (varType == VarType.REAL) {
+            main_text += "store double " + name + ", double* %" + id + "\n";
+        }
+    }
+
+    public static String load(String id, VarType varType) {
+        if (varType == VarType.INT) {
+            main_text += "%" + reg + " = load i32, i32* %" + id + "\n";
+        } else {
+            main_text += "%" + reg + " = load double, double* %" + id + "\n";
+        }
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    static String multiplyTwoIntegers(String val1, String val2) {
+        main_text += "%" + reg + " = mul i32 " + val1 + "," + val2 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    static String multiplyTwoDoubles(String val1, String val2) {
+        main_text += "%" + reg + " = fmul double " + val1 + "," + val2 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
     }
 
     public static String addIntAndReal(String val) {
@@ -126,6 +123,82 @@ public class LLVMGenerator {
         String lineNo = "%" + reg;
         reg++;
         return lineNo;
+    }
+
+    static String sitofp(String value) {
+        main_text += "%" + reg + " = sitofp i32 " + value + " to double\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String subIntFromReal(String val) {
+        main_text += "%" + reg + " = fsub double " + val + ",%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String subIntFromReal1(String val) {
+        main_text += "%" + reg + " = fsub double %" + (reg - 1) + "," + val + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String subIntFromInt(String val1, String val2) {
+        main_text += "%" + reg + " = sub i32 " + val1 + "," + val2 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String subDoubleFromDouble(String val1, String val2) {
+        main_text += "%" + reg + " = fsub double " + val1 + "," + val2 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String multiplyIntAndReal(String val) {
+        main_text += "%" + reg + " = fmul double " + val + ",%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideIntAndReal(String val) {
+        main_text += "%" + reg + " = fdiv double " + val + "," + "%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideTwoDoubles(String val2, String val1) {
+        main_text += "%" + reg + " = fdiv double " + val2 + "," + val1 + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static String divideTwoIntegers() {
+        main_text += "%" + reg + " = fdiv double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+     /*   static void load(String id){
+        main_text += "%"+reg+" = load i32, i32* %"+id+"\n";
+        reg++;
+    }*/
+
+    static void printf(VarType varType) {
+        if (varType == VarType.INT) {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %" + (reg - 1) + ")\n";
+        } else {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + (reg - 1) + ")\n";
+        }
+        reg++;
     }
 
     public static String addMultiple(String val, VarType varType) {
@@ -181,13 +254,6 @@ public class LLVMGenerator {
         reg++;
     }
 
-    static String sitofp(String value) {
-        main_text += "%" + reg + " = sitofp i32 " + value + " to double\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
     static void fptosi(String value) {
         main_text += "%" + reg + " = fptosi double " + value + " to i32\n";
         reg++;
@@ -221,14 +287,16 @@ public class LLVMGenerator {
         reg++;
     }
 
-    public static void assign(String id, String name, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "store i32 " + name + ", i32* %" + id + "\n";
-            return;
-        }
-        if (varType == VarType.REAL) {
-            main_text += "store double " + name + ", double* %" + id + "\n";
-        }
+    public static String subIntsFromInt(String val) {
+        main_text += "%" + reg + " = sub i32 " + val + ",%" + (reg - 1) + "\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    public static void subIntsFromDouble() {
+        main_text += "%" + reg + " = fsub double %" + (reg - 1) + ",%" + (reg - 2) + "\n";
+        reg++;
     }
 
     public static void assignInt(String id, String name) {
@@ -249,82 +317,15 @@ public class LLVMGenerator {
         reg++;
     }
 
-    public static String load(String id, VarType varType) {
+    static void assign(String id, String value) {
+        main_text += "store i32 " + value + ", i32* %" + id + "\n";
+    }
+
+    static void assign1(String id, VarType varType) {
         if (varType == VarType.INT) {
-            main_text += "%" + reg + " = load i32, i32* %" + id + "\n";
+            main_text += "store i32 %" + (reg - 1) + ", i32* %" + id + "\n";
         } else {
-            main_text += "%" + reg + " = load double, double* %" + id + "\n";
+            main_text += "store double %" + (reg - 1) + ", double* %" + id + "\n";
         }
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subIntFromReal(String val) {
-        main_text += "%" + reg + " = fsub double " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subIntFromReal1(String val) {
-        main_text += "%" + reg + " = fsub double %" + (reg - 1) + "," + val + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subIntFromInt(String val1, String val2) {
-        main_text += "%" + reg + " = sub i32 " + val1 + "," + val2 + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subDoubleFromDouble(String val1, String val2) {
-        main_text += "%" + reg + " = fsub double " + val1 + "," + val2 + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subIntsFromInt(String val) {
-        main_text += "%" + reg + " = sub i32 " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static void subIntsFromDouble() {
-        main_text += "%" + reg + " = fsub double %" + (reg - 1) + ",%" + (reg - 2) + "\n";
-        reg++;
-    }
-
-    public static String multiplyIntAndReal(String val) {
-        main_text += "%" + reg + " = fmul double " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String divideIntAndReal(String val) {
-        main_text += "%" + reg + " = fdiv double " + val + "," + "%" + (reg - 1)  + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String divideTwoDoubles(String val2, String val1) {
-        main_text += "%" + reg + " = fdiv double " + val2 + "," + val1 + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String divideTwoIntegers() {
-        main_text += "%" + reg + " = fdiv double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
     }
 }
