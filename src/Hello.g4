@@ -15,8 +15,8 @@ assign_stmt: ID ASSIGN expression;
 expression: val #value
 | expression MULT val #mul
 | expression DIVIDE val #divide
-| expression MINUS expression #sub
-| expression PLUS expression #add
+| expression MINUS val #sub
+| expression PLUS val #add
 ;
 
 
