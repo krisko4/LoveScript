@@ -1,4 +1,4 @@
-// Generated from C:/Users/adm/OneDrive - Politechnika Warszawska/Dokumenty/MyCustomLanguage/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -176,6 +176,30 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitString(HelloParser.StringContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code toint}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void enterToint(HelloParser.TointContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code toint}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void exitToint(HelloParser.TointContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code toreal}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void enterToreal(HelloParser.TorealContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code toreal}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 */
+	void exitToreal(HelloParser.TorealContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code priorityExpression}
 	 * labeled alternative in {@link HelloParser#val}.

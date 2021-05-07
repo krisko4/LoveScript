@@ -1,4 +1,4 @@
-// Generated from C:/Users/adm/OneDrive - Politechnika Warszawska/Dokumenty/MyCustomLanguage/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -16,9 +16,9 @@ public class HelloParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, DIVIDE=3, MULT=4, MINUS=5, PLUS=6, STRING=7, ASSIGN=8, 
-		TYPE=9, AND=10, SUBTRACT=11, FROM=12, ADD=13, TO=14, PRINT=15, READ=16, 
-		NEWLINE=17, ID=18, WS=19, REAL=20, INT=21, ARRAY=22;
+		T__0=1, T__1=2, TOINT=3, TOREAL=4, DIVIDE=5, MULT=6, MINUS=7, PLUS=8, 
+		STRING=9, ASSIGN=10, TO=11, TYPE=12, PRINT=13, READ=14, NEWLINE=15, ID=16, 
+		WS=17, REAL=18, INT=19, ARRAY=20;
 	public static final int
 		RULE_start = 0, RULE_statement = 1, RULE_print_stmt = 2, RULE_read_stmt = 3, 
 		RULE_assign_stmt = 4, RULE_expression = 5, RULE_val = 6;
@@ -32,17 +32,17 @@ public class HelloParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'('", "')'", "'/'", "'*'", "':-'", "':+'", null, "'='", null, 
-			"'oraz'", "'odejmij'", "'od'", "'dodaj'", "'do'", "'wypisz'", "'odczytaj'", 
-			null, null, null, null, null, "'tablica'"
+			null, "'('", "')'", "'(int)'", "'(real)'", "'/'", "'*'", "':-'", "':+'", 
+			null, "'='", "'do'", null, "'wypisz'", "'odczytaj'", null, null, null, 
+			null, null, "'tablica'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, "DIVIDE", "MULT", "MINUS", "PLUS", "STRING", "ASSIGN", 
-			"TYPE", "AND", "SUBTRACT", "FROM", "ADD", "TO", "PRINT", "READ", "NEWLINE", 
-			"ID", "WS", "REAL", "INT", "ARRAY"
+			null, null, null, "TOINT", "TOREAL", "DIVIDE", "MULT", "MINUS", "PLUS", 
+			"STRING", "ASSIGN", "TO", "TYPE", "PRINT", "READ", "NEWLINE", "ID", "WS", 
+			"REAL", "INT", "ARRAY"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -627,6 +627,24 @@ public class HelloParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class TointContext extends ValContext {
+		public TerminalNode TOINT() { return getToken(HelloParser.TOINT, 0); }
+		public TerminalNode ID() { return getToken(HelloParser.ID, 0); }
+		public TointContext(ValContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterToint(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitToint(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitToint(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class StringContext extends ValContext {
 		public TerminalNode STRING() { return getToken(HelloParser.STRING, 0); }
 		public StringContext(ValContext ctx) { copyFrom(ctx); }
@@ -677,6 +695,24 @@ public class HelloParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitPriorityExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class TorealContext extends ValContext {
+		public TerminalNode TOREAL() { return getToken(HelloParser.TOREAL, 0); }
+		public TerminalNode ID() { return getToken(HelloParser.ID, 0); }
+		public TorealContext(ValContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterToreal(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitToreal(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitToreal(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -736,7 +772,7 @@ public class HelloParser extends Parser {
 		ValContext _localctx = new ValContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_val);
 		try {
-			setState(69);
+			setState(73);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
@@ -779,15 +815,35 @@ public class HelloParser extends Parser {
 				match(STRING);
 				}
 				break;
-			case T__0:
-				_localctx = new PriorityExpressionContext(_localctx);
+			case TOINT:
+				_localctx = new TointContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(65);
-				match(T__0);
+				match(TOINT);
 				setState(66);
-				expression(0);
+				match(ID);
+				}
+				break;
+			case TOREAL:
+				_localctx = new TorealContext(_localctx);
+				enterOuterAlt(_localctx, 7);
+				{
 				setState(67);
+				match(TOREAL);
+				setState(68);
+				match(ID);
+				}
+				break;
+			case T__0:
+				_localctx = new PriorityExpressionContext(_localctx);
+				enterOuterAlt(_localctx, 8);
+				{
+				setState(69);
+				match(T__0);
+				setState(70);
+				expression(0);
+				setState(71);
 				match(T__1);
 				}
 				break;
@@ -828,26 +884,27 @@ public class HelloParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30J\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\26N\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\5\2\22\n\2\3\2\7\2\25\n"+
 		"\2\f\2\16\2\30\13\2\3\3\3\3\3\3\5\3\35\n\3\3\4\3\4\3\4\3\5\3\5\3\5\3\5"+
 		"\3\5\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3"+
 		"\7\3\7\3\7\7\7:\n\7\f\7\16\7=\13\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b"+
-		"\5\bH\n\b\3\b\2\3\f\t\2\4\6\b\n\f\16\2\2\2O\2\26\3\2\2\2\4\34\3\2\2\2"+
-		"\6\36\3\2\2\2\b!\3\2\2\2\n&\3\2\2\2\f*\3\2\2\2\16G\3\2\2\2\20\22\5\4\3"+
-		"\2\21\20\3\2\2\2\21\22\3\2\2\2\22\23\3\2\2\2\23\25\7\23\2\2\24\21\3\2"+
-		"\2\2\25\30\3\2\2\2\26\24\3\2\2\2\26\27\3\2\2\2\27\3\3\2\2\2\30\26\3\2"+
-		"\2\2\31\35\5\6\4\2\32\35\5\b\5\2\33\35\5\n\6\2\34\31\3\2\2\2\34\32\3\2"+
-		"\2\2\34\33\3\2\2\2\35\5\3\2\2\2\36\37\7\21\2\2\37 \5\16\b\2 \7\3\2\2\2"+
-		"!\"\7\22\2\2\"#\7\13\2\2#$\7\20\2\2$%\7\24\2\2%\t\3\2\2\2&\'\7\24\2\2"+
-		"\'(\7\n\2\2()\5\f\7\2)\13\3\2\2\2*+\b\7\1\2+,\5\16\b\2,;\3\2\2\2-.\f\4"+
-		"\2\2./\7\7\2\2/:\5\f\7\5\60\61\f\3\2\2\61\62\7\b\2\2\62:\5\f\7\4\63\64"+
-		"\f\6\2\2\64\65\7\6\2\2\65:\5\16\b\2\66\67\f\5\2\2\678\7\5\2\28:\5\16\b"+
-		"\29-\3\2\2\29\60\3\2\2\29\63\3\2\2\29\66\3\2\2\2:=\3\2\2\2;9\3\2\2\2;"+
-		"<\3\2\2\2<\r\3\2\2\2=;\3\2\2\2>H\7\24\2\2?H\7\27\2\2@H\7\26\2\2AH\7\30"+
-		"\2\2BH\7\t\2\2CD\7\3\2\2DE\5\f\7\2EF\7\4\2\2FH\3\2\2\2G>\3\2\2\2G?\3\2"+
-		"\2\2G@\3\2\2\2GA\3\2\2\2GB\3\2\2\2GC\3\2\2\2H\17\3\2\2\2\b\21\26\349;"+
-		"G";
+		"\3\b\3\b\3\b\3\b\5\bL\n\b\3\b\2\3\f\t\2\4\6\b\n\f\16\2\2\2U\2\26\3\2\2"+
+		"\2\4\34\3\2\2\2\6\36\3\2\2\2\b!\3\2\2\2\n&\3\2\2\2\f*\3\2\2\2\16K\3\2"+
+		"\2\2\20\22\5\4\3\2\21\20\3\2\2\2\21\22\3\2\2\2\22\23\3\2\2\2\23\25\7\21"+
+		"\2\2\24\21\3\2\2\2\25\30\3\2\2\2\26\24\3\2\2\2\26\27\3\2\2\2\27\3\3\2"+
+		"\2\2\30\26\3\2\2\2\31\35\5\6\4\2\32\35\5\b\5\2\33\35\5\n\6\2\34\31\3\2"+
+		"\2\2\34\32\3\2\2\2\34\33\3\2\2\2\35\5\3\2\2\2\36\37\7\17\2\2\37 \5\16"+
+		"\b\2 \7\3\2\2\2!\"\7\20\2\2\"#\7\16\2\2#$\7\r\2\2$%\7\22\2\2%\t\3\2\2"+
+		"\2&\'\7\22\2\2\'(\7\f\2\2()\5\f\7\2)\13\3\2\2\2*+\b\7\1\2+,\5\16\b\2,"+
+		";\3\2\2\2-.\f\4\2\2./\7\t\2\2/:\5\f\7\5\60\61\f\3\2\2\61\62\7\n\2\2\62"+
+		":\5\f\7\4\63\64\f\6\2\2\64\65\7\b\2\2\65:\5\16\b\2\66\67\f\5\2\2\678\7"+
+		"\7\2\28:\5\16\b\29-\3\2\2\29\60\3\2\2\29\63\3\2\2\29\66\3\2\2\2:=\3\2"+
+		"\2\2;9\3\2\2\2;<\3\2\2\2<\r\3\2\2\2=;\3\2\2\2>L\7\22\2\2?L\7\25\2\2@L"+
+		"\7\24\2\2AL\7\26\2\2BL\7\13\2\2CD\7\5\2\2DL\7\22\2\2EF\7\6\2\2FL\7\22"+
+		"\2\2GH\7\3\2\2HI\5\f\7\2IJ\7\4\2\2JL\3\2\2\2K>\3\2\2\2K?\3\2\2\2K@\3\2"+
+		"\2\2KA\3\2\2\2KB\3\2\2\2KC\3\2\2\2KE\3\2\2\2KG\3\2\2\2L\17\3\2\2\2\b\21"+
+		"\26\349;K";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

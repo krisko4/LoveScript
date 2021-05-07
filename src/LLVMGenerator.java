@@ -43,31 +43,36 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static void printf1(String value, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 " + (value) + ")\n";
-            reg++;
-        } else if (varType == VarType.REAL) {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double " + (value) + ")\n";
-            reg++;
-        } else {
-            String text = value.replace("\"", "");
-            header_text += "@.str" + reg + " = private constant [" + text.length() + " x i8] c\"" + text + "\"\n";
-            main_text += "%sup" + reg + " = getelementptr inbounds [" + text.length() + " x i8], [" + text.length() + " x i8]* @.str" + reg + ", i32 0, i32 0\n";
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* %sup" + reg + ")\n";
-            reg++;
+    public static void printf1(Value value) {
+        int length = value.name.length() + 2;
+        if (value.type == VarType.INT) {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 " + (value.name) + ")\n";
+
+        } else if (value.type == VarType.REAL) {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double " + (value.name) + ")\n";
+
+        } else if(value.variable != null) {
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([" + length + " x i8], [" + length + " x i8]* " + value.variable + ", i32 0, i32 0))\n";
+
         }
+        else{
+            header_text += "@str" + reg + " = private constant [" + length + " x i8] c\"" + value.name + "\\0A\\00\"\n";
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([" + length + " x i8], [" + length + " x i8]* @str" + reg + ", i32 0, i32 0))\n";
+        }
+        reg++;
 
     }
 
     static void declare(String id, VarType varType) {
         if (varType == VarType.INT) {
             main_text += "%" + id + " = alloca i32\n";
-        } else {
+        } else if(varType == VarType.REAL) {
             main_text += "%" + id + " = alloca double\n";
         }
 
     }
+
+
 
     public static void assign(String id, String name, VarType varType) {
         if (varType == VarType.INT) {
@@ -77,12 +82,16 @@ public class LLVMGenerator {
         if (varType == VarType.REAL) {
             main_text += "store double " + name + ", double* %" + id + "\n";
         }
+        if(varType == VarType.STRING){
+            int length = name.length() + 2;
+            header_text += "@" + id + " = private constant [" + length + " x i8] c\"" + name + "\\0A\\00\"\n";
+        }
     }
 
     public static String load(String id, VarType varType) {
         if (varType == VarType.INT) {
             main_text += "%" + reg + " = load i32, i32* %" + id + "\n";
-        } else {
+        } else if (varType == VarType.REAL) {
             main_text += "%" + reg + " = load double, double* %" + id + "\n";
         }
         String lineNo = "%" + reg;
@@ -127,6 +136,13 @@ public class LLVMGenerator {
 
     static String sitofp(String value) {
         main_text += "%" + reg + " = sitofp i32 " + value + " to double\n";
+        String lineNo = "%" + reg;
+        reg++;
+        return lineNo;
+    }
+
+    static String fptosi(String value){
+        main_text += "%"+reg+" = fptosi double "+value+" to i32\n";
         String lineNo = "%" + reg;
         reg++;
         return lineNo;
@@ -186,146 +202,5 @@ public class LLVMGenerator {
         String lineNo = "%" + reg;
         reg++;
         return lineNo;
-    }
-     /*   static void load(String id){
-        main_text += "%"+reg+" = load i32, i32* %"+id+"\n";
-        reg++;
-    }*/
-
-    static void printf(VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %" + (reg - 1) + ")\n";
-        } else {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + (reg - 1) + ")\n";
-        }
-        reg++;
-    }
-
-    public static String addMultiple(String val, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = fadd double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
-        } else {
-            main_text += "%" + reg + " = fadd double %" + (reg - 1) + "," + val + "\n";
-        }
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static void sub(String val1, String val2) {
-        main_text += "%" + reg + " = sub i32 " + val1 + "," + val2 + "\n";
-        reg++;
-        // main_text += "%"+reg+" = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strp, i32 0, i32 0), i32 %"+(reg - 1)+")\n";
-        //  reg++;
-    }
-
-    public static String subDoublesFromDouble() {
-        main_text += "%" + reg + " = fsub double %" + (reg - 1) + ",%" + (reg - 2) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static String subDoublesFromDouble(String val) {
-        main_text += "%" + reg + " = fsub double " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-
-    public static void add1(VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = add i32 %" + (reg - 2) + ",%" + (reg - 1) + "\n";
-        } else {
-            main_text += "%" + reg + " = fadd double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
-        }
-
-        reg++;
-    }
-
-    public static void add2(String value1, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "%" + reg + " = add i32 %" + (reg - 1) + "," + value1 + "\n";
-        } else {
-            main_text += "%" + reg + " = fadd double %" + (reg - 1) + "," + value1 + "\n";
-        }
-
-        reg++;
-    }
-
-    static void fptosi(String value) {
-        main_text += "%" + reg + " = fptosi double " + value + " to i32\n";
-        reg++;
-    }
-
-    public static String addMultiple1(String val) {
-        main_text += "%" + reg + " = add i32 " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-
-    }
-
-    public static void subMultiple1() {
-        main_text += "%" + reg + " = sub i32 %" + (reg - 1) + ",%" + (reg - 2) + "\n";
-        reg++;
-    }
-
-    public static void sub1() {
-        main_text += "%" + reg + " = sub i32 %" + (reg - 1) + ",%" + (reg - 2) + "\n";
-        reg++;
-    }
-
-    public static void sub2(String value) {
-        main_text += "%" + reg + " = sub i32 " + value + ",%" + (reg - 1) + "\n";
-        reg++;
-    }
-
-    public static void sub3(String value) {
-        main_text += "%" + reg + " = sub i32 %" + (reg - 1) + "," + value + "\n";
-        reg++;
-    }
-
-    public static String subIntsFromInt(String val) {
-        main_text += "%" + reg + " = sub i32 " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
-        reg++;
-        return lineNo;
-    }
-
-    public static void subIntsFromDouble() {
-        main_text += "%" + reg + " = fsub double %" + (reg - 1) + ",%" + (reg - 2) + "\n";
-        reg++;
-    }
-
-    public static void assignInt(String id, String name) {
-        main_text += "store i32 " + name + ", i32* %" + id + "\n";
-    }
-
-    public static void assignReal(String id, String name) {
-        main_text += "store double " + name + ", double* %" + id + "\n";
-    }
-
-    public static void loadInteger(String id) {
-        main_text += "%" + reg + " = load i32, i32* %" + id + "\n";
-        reg++;
-    }
-
-    public static void loadReal(String id) {
-        main_text += "%" + reg + " = load double, double* %" + id + "\n";
-        reg++;
-    }
-
-    static void assign(String id, String value) {
-        main_text += "store i32 " + value + ", i32* %" + id + "\n";
-    }
-
-    static void assign1(String id, VarType varType) {
-        if (varType == VarType.INT) {
-            main_text += "store i32 %" + (reg - 1) + ", i32* %" + id + "\n";
-        } else {
-            main_text += "store double %" + (reg - 1) + ", double* %" + id + "\n";
-        }
     }
 }

@@ -1,1 +1,18 @@
-wypisz "Hello world"
+odczytaj REAL do x
+wypisz x
+
+
+a=(5:+5.5) * (-4/3) :-(9.7 / 3) :+ 3.5 :+ x
+wypisz a
+
+b = 4.5
+c = (int)b
+wypisz c
+
+d = 4
+e = (real)d
+wypisz e
+
+f = "Hello world"
+wypisz f
+wypisz "Kompilatory sa wspaniale"

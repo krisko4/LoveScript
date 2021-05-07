@@ -30,7 +30,7 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitPrint_stmt(HelloParser.Print_stmtContext ctx) {
         Value value = stack.pop();
-        LLVMGenerator.printf1(value.name, value.type);
+        LLVMGenerator.printf1(value);
     }
 
     @Override
@@ -39,8 +39,10 @@ public class LLVMActions extends HelloBaseListener {
             throw new RuntimeException(ctx.ID().getText() + " is undefined.");
         }
         Value value = memory.get(ctx.ID().getText());
-        String lineNo = LLVMGenerator.load(ctx.ID().getText(), value.type);
-        stack.push(new Value(lineNo, value.type, ctx.ID().getText()));
+        if(value.type != VarType.STRING) {
+            String lineNo = LLVMGenerator.load(ctx.ID().getText(), value.type);
+            stack.push(new Value(lineNo, value.type, ctx.ID().getText()));
+        }
     }
 
     @Override
@@ -54,12 +56,14 @@ public class LLVMActions extends HelloBaseListener {
     }
 
     @Override
-    public void exitString(HelloParser.StringContext ctx) { stack.push(new Value(ctx.STRING().getText(), VarType.STRING));}
+    public void exitString(HelloParser.StringContext ctx) {
+        String text = ctx.STRING().getText().replace("\"", "");
+        stack.push(new Value(text, VarType.STRING));
+    }
 
 
     @Override
     public void exitRead_stmt(HelloParser.Read_stmtContext ctx) {
-
         String ID = ctx.ID().getText();
         String type = ctx.TYPE().getText();
         if (!memory.containsKey(ID)) {
@@ -82,24 +86,16 @@ public class LLVMActions extends HelloBaseListener {
         String ID = ctx.ID().getText();
         Value value = stack.pop();
         if (!memory.containsKey(ID)) {
-            LLVMGenerator.declare(ID, value.type);
-            memory.put(ID, value);
-        } else {
-            Value previousVal = memory.get(ID);
-            if (previousVal.type != value.type) {
-                String lineNo;
-                if (value.type == VarType.REAL) {
-                    lineNo = LLVMGenerator.sitofp(previousVal.name);
-                } else {
-                    lineNo = LLVMGenerator.sitofp(value.name);
-                }
-                Value newVal = new Value(lineNo, value.type);
-                memory.replace(ID, memory.get(ID), newVal);
-            } else {
-                memory.replace(ID, memory.get(ID), value);
+            if(value.type != VarType.STRING){
+                LLVMGenerator.declare(ID, value.type);
             }
+            else{
+                value.variable = "@" + ID;
+                stack.push(value);
+            }
+            LLVMGenerator.assign(ID, value.name, value.type);
+            memory.put(ID, value);
         }
-        LLVMGenerator.assign(ID, value.name, value.type);
 
     }
 
@@ -215,6 +211,36 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitStart(HelloParser.StartContext ctx) {
         System.out.println(LLVMGenerator.generate());
+    }
+
+    @Override
+    public void exitToint(HelloParser.TointContext ctx) {
+        String id = ctx.ID().getText();
+        Value value = memory.get(id);
+        if(value.type == VarType.INT){
+            return;
+        }
+        if(value.type == VarType.STRING){
+            throw new RuntimeException("Cannot convert type STRING to INT");
+        }
+        value.name = LLVMGenerator.fptosi(value.name);
+        value.type = VarType.INT;
+        stack.push(value);
+
+    }
+
+    @Override public void exitToreal(HelloParser.TorealContext ctx) {
+        String id = ctx.ID().getText();
+        Value value = memory.get(id);
+        if(value.type == VarType.REAL){
+            return;
+        }
+        if(value.type == VarType.STRING){
+            throw new RuntimeException("Cannot convert type STRING to INT");
+        }
+        value.name = LLVMGenerator.sitofp(value.name);
+        value.type = VarType.REAL;
+        stack.push(value);
     }
 
 

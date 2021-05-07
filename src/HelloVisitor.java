@@ -1,4 +1,4 @@
-// Generated from C:/Users/adm/OneDrive - Politechnika Warszawska/Dokumenty/MyCustomLanguage/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -109,6 +109,20 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitString(HelloParser.StringContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code toint}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitToint(HelloParser.TointContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code toreal}
+	 * labeled alternative in {@link HelloParser#val}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitToreal(HelloParser.TorealContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code priorityExpression}
 	 * labeled alternative in {@link HelloParser#val}.
