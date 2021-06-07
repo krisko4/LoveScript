@@ -203,4 +203,12 @@ public class LLVMGenerator {
         reg++;
         return lineNo;
     }
+
+    public static void declareArray(String ID, String size, boolean isGlobal) {
+        if(isGlobal){
+            header_text += "@" + ID + " = common dso_local global [" + size + " x i32], zeroinitializer, align 16\n";
+            return;
+        }
+        main_text += "%" + ID + " = alloca [" + size + " x i32], align 16\n";
+    }
 }

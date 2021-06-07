@@ -40,6 +40,12 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssign_stmt(HelloParser.Assign_stmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#function_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction_stmt(HelloParser.Function_stmtContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code add}
 	 * labeled alternative in {@link HelloParser#expression}.
 	 * @param ctx the parse tree

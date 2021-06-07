@@ -2,7 +2,7 @@
 
 import java.util.*;
 
-enum VarType {INT, REAL, STRING, UNKNOWN}
+enum VarType {INT, REAL, STRING, ARRAY}
 
 class Value {
     public String name;
@@ -36,10 +36,10 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitId(HelloParser.IdContext ctx) {
         if (!memory.containsKey(ctx.ID().getText())) {
-            throw new RuntimeException(ctx.ID().getText() + " is undefined.");
+            throw new RuntimeException(ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
         }
         Value value = memory.get(ctx.ID().getText());
-        if(value.type != VarType.STRING) {
+        if (value.type != VarType.STRING) {
             String lineNo = LLVMGenerator.load(ctx.ID().getText(), value.type);
             stack.push(new Value(lineNo, value.type, ctx.ID().getText()));
         }
@@ -80,8 +80,8 @@ public class LLVMActions extends HelloBaseListener {
                 memory.put(ID, val);
             }
 
-        }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("Invalid read construction - ID not found. Valid example: odczytaj INT do x");
+        } catch (NullPointerException nullPointerException) {
+            throw new RuntimeException("Invalid read construction - ID not found. Valid example: odczytaj INT do x. Line: " + ctx.getStart().getLine());
         }
     }
 
@@ -89,22 +89,45 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitAssign_stmt(HelloParser.Assign_stmtContext ctx) {
         String ID = ctx.ID().getText();
-        try{
+        try {
             Value value = stack.pop();
             if (!memory.containsKey(ID)) {
-                if(value.type != VarType.STRING){
-                    LLVMGenerator.declare(ID, value.type);
+                switch (value.type) {
+                    case ARRAY:
+                        LLVMGenerator.declareArray(ID, value.name, true);
+                        return;
+                    case STRING:
+                        value.variable = "@" + ID;
+                        stack.push(value);
+                        return;
+                    default:
+                        LLVMGenerator.declare(ID, value.type);
+                        LLVMGenerator.assign(ID, value.name, value.type);
+                        memory.put(ID, value);
+                        return;
                 }
-                else{
-                    value.variable = "@" + ID;
-                    stack.push(value);
-                }
-                LLVMGenerator.assign(ID, value.name, value.type);
-                memory.put(ID, value);
             }
-        }
-        catch (EmptyStackException e){
-            throw new RuntimeException("Invalid assing attempt. Valid example: x=5");
+//                if(value.type == VarType.ARRAY){
+//                    LLVMGenerator.declareArray()
+//                }
+//                if (value.type != VarType.STRING) {
+//                    LLVMGenerator.declare(ID, value.type);
+//                } else {
+//                    value.variable = "@" + ID;
+//                    stack.push(value);
+//                }
+//                LLVMGenerator.assign(ID, value.name, value.type);
+//                memory.put(ID, value);
+//                return;
+//            }
+            Value previousVal = memory.get(ID);
+            if (previousVal.type != value.type) {
+                throw new RuntimeException("Mismatched types. Cannot convert " + previousVal.type + " to " + value.type + ". Line: " + ctx.getStart().getLine());
+            }
+            LLVMGenerator.assign(ID, value.name, value.type);
+            memory.replace(ID, value);
+        } catch (EmptyStackException e) {
+            throw new RuntimeException("Invalid assing attempt. Valid example: x=5. Line: " + ctx.getStart().getLine());
         }
 
     }
@@ -188,8 +211,6 @@ public class LLVMActions extends HelloBaseListener {
     }
 
 
-
-
     @Override
     public void exitSub(HelloParser.SubContext ctx) {
         Value value1 = stack.pop();
@@ -197,7 +218,7 @@ public class LLVMActions extends HelloBaseListener {
         VarType varType;
         String lineNo;
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            varType=VarType.REAL;
+            varType = VarType.REAL;
             if (value1.type == VarType.INT) {
                 LLVMGenerator.sitofp(value1.name);
                 lineNo = LLVMGenerator.subIntFromReal(value2.name);
@@ -208,7 +229,7 @@ public class LLVMActions extends HelloBaseListener {
                 lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name);
             }
         } else {
-            varType=VarType.INT;
+            varType = VarType.INT;
             lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name);
         }
         Value value = new Value(lineNo, varType);
@@ -216,6 +237,11 @@ public class LLVMActions extends HelloBaseListener {
 
 
     }
+
+    @Override public void exitArray(HelloParser.ArrayContext ctx) {
+        stack.push(new Value(ctx.INT().getText(), VarType.ARRAY));
+    }
+
 
 
     @Override
@@ -225,33 +251,34 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitToint(HelloParser.TointContext ctx) {
-        try{
+        try {
             String id = ctx.ID().getText();
             Value value = memory.get(id);
-            if(value.type == VarType.INT){
+            if (value.type == VarType.INT) {
                 return;
             }
-            if(value.type == VarType.STRING){
-                throw new RuntimeException("Cannot convert type STRING to INT");
+            if (value.type == VarType.STRING) {
+                throw new RuntimeException("Cannot convert type STRING to INT. Line: " + ctx.getStart().getLine());
             }
             value.name = LLVMGenerator.fptosi(value.name);
             value.type = VarType.INT;
             stack.push(value);
-        }catch(NullPointerException nullPointerException){
-            throw new RuntimeException("Invalid construction - converting value must be an ID. Valid example: (int)x. In future versions number convertions will be available");
+        } catch (NullPointerException nullPointerException) {
+            throw new RuntimeException("Invalid construction - converting value must be an ID. Valid example: (int)x. In future versions number convertions will be available. Line: " + ctx.getStart().getLine());
         }
 
 
     }
 
-    @Override public void exitToreal(HelloParser.TorealContext ctx) {
+    @Override
+    public void exitToreal(HelloParser.TorealContext ctx) {
         String id = ctx.ID().getText();
         Value value = memory.get(id);
-        if(value.type == VarType.REAL){
+        if (value.type == VarType.REAL) {
             return;
         }
-        if(value.type == VarType.STRING){
-            throw new RuntimeException("Cannot convert type STRING to INT");
+        if (value.type == VarType.STRING) {
+            throw new RuntimeException("Cannot convert type STRING to INT. Line: " + ctx.getStart().getLine());
         }
         value.name = LLVMGenerator.sitofp(value.name);
         value.type = VarType.REAL;
