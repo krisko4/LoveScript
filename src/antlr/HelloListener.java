@@ -1,4 +1,5 @@
-// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src/antlr\Hello.g4 by ANTLR 4.9.1
+package antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -26,6 +27,36 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatement(HelloParser.StatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#function_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction_stmt(HelloParser.Function_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#function_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction_stmt(HelloParser.Function_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#function_param}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction_param(HelloParser.Function_paramContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#function_param}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction_param(HelloParser.Function_paramContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#function_start}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction_start(HelloParser.Function_startContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#function_start}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction_start(HelloParser.Function_startContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HelloParser#print_stmt}.
 	 * @param ctx the parse tree
@@ -57,15 +88,25 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitAssign_stmt(HelloParser.Assign_stmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#function_stmt}.
+	 * Enter a parse tree produced by {@link HelloParser#function_call}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction_stmt(HelloParser.Function_stmtContext ctx);
+	void enterFunction_call(HelloParser.Function_callContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#function_stmt}.
+	 * Exit a parse tree produced by {@link HelloParser#function_call}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction_stmt(HelloParser.Function_stmtContext ctx);
+	void exitFunction_call(HelloParser.Function_callContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#return_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturn_stmt(HelloParser.Return_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#return_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturn_stmt(HelloParser.Return_stmtContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code add}
 	 * labeled alternative in {@link HelloParser#expression}.
@@ -126,6 +167,16 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValue(HelloParser.ValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#array_element}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_element(HelloParser.Array_elementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#array_element}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_element(HelloParser.Array_elementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code id}
 	 * labeled alternative in {@link HelloParser#val}.

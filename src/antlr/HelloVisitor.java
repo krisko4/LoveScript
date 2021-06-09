@@ -1,4 +1,5 @@
-// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src\Hello.g4 by ANTLR 4.9.1
+// Generated from C:/Users/optiplex/IdeaProjects/MyLanguage1/src/antlr\Hello.g4 by ANTLR 4.9.1
+package antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -22,6 +23,24 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(HelloParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#function_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction_stmt(HelloParser.Function_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#function_param}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction_param(HelloParser.Function_paramContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#function_start}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction_start(HelloParser.Function_startContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HelloParser#print_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -40,11 +59,17 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssign_stmt(HelloParser.Assign_stmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#function_stmt}.
+	 * Visit a parse tree produced by {@link HelloParser#function_call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction_stmt(HelloParser.Function_stmtContext ctx);
+	T visitFunction_call(HelloParser.Function_callContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#return_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturn_stmt(HelloParser.Return_stmtContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code add}
 	 * labeled alternative in {@link HelloParser#expression}.
@@ -80,6 +105,12 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitValue(HelloParser.ValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#array_element}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray_element(HelloParser.Array_elementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code id}
 	 * labeled alternative in {@link HelloParser#val}.

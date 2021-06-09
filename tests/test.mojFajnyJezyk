@@ -1,0 +1,7 @@
+fun(x){
+   wypisz x
+}
+fun(5)
+
+
+
