@@ -262,17 +262,17 @@ public class LLVMActions extends HelloBaseListener {
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
             varType = VarType.REAL;
             if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value2.name, currentFunction);
+                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value2.name, currentFunction, insideFunction);
             } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value1.name, currentFunction);
+                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value1.name, currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.name, value2.name, currentFunction);
+                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.name, value2.name, currentFunction);
+            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);
@@ -316,18 +316,18 @@ public class LLVMActions extends HelloBaseListener {
         String lineNo;
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
             if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value2.name, currentFunction);
+                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.divideIntAndReal(value2.name, currentFunction, insideFunction);
             } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value1.name, currentFunction);
+                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.divideIntAndReal(value1.name, currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.divideTwoDoubles(value1.name, value2.name, currentFunction);
+                lineNo = LLVMGenerator.divideTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
             }
         } else {
-            LLVMGenerator.sitofp(value1.name, currentFunction);
-            LLVMGenerator.sitofp(value2.name, currentFunction);
-            lineNo = LLVMGenerator.divideTwoIntegers();
+            LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
+            LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+            lineNo = LLVMGenerator.divideTwoIntegers(currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);
@@ -343,17 +343,17 @@ public class LLVMActions extends HelloBaseListener {
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
             varType = VarType.REAL;
             if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction);
-                lineNo = LLVMGenerator.subIntFromReal(value2.name, currentFunction);
+                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.subIntFromReal(value2.name, currentFunction, insideFunction);
             } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction);
-                lineNo = LLVMGenerator.subIntFromReal1(value1.name, currentFunction);
+                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.subIntFromReal1(value1.name, currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name, currentFunction);
+                lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name, currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name, currentFunction);
+            lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name, currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);
@@ -383,7 +383,7 @@ public class LLVMActions extends HelloBaseListener {
             if (value.type == VarType.STRING) {
                 throw new RuntimeException("Cannot convert type STRING to INT. Line: " + ctx.getStart().getLine());
             }
-            value.name = LLVMGenerator.fptosi(value.name, currentFunction);
+            value.name = LLVMGenerator.fptosi(value.name, currentFunction, insideFunction);
             value.type = VarType.INT;
             stack.push(value);
         } catch (NullPointerException nullPointerException) {
@@ -403,7 +403,7 @@ public class LLVMActions extends HelloBaseListener {
         if (value.type == VarType.STRING) {
             throw new RuntimeException("Cannot convert type STRING to INT. Line: " + ctx.getStart().getLine());
         }
-        value.name = LLVMGenerator.sitofp(value.name, currentFunction);
+        value.name = LLVMGenerator.sitofp(value.name, currentFunction, insideFunction);
         value.type = VarType.REAL;
         stack.push(value);
     }

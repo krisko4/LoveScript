@@ -32,11 +32,11 @@ public class AddOperation extends Operation {
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
             varType = VarType.REAL;
             if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction);
+                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction, insideFunction);
             } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction);
+                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction, insideFunction);
             } else {
                 lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
             }
