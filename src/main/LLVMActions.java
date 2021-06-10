@@ -7,13 +7,9 @@ import containers.Container;
 import containers.Function;
 import containers.Value;
 import operations.*;
-import types.TypeMapper;
 import types.VarType;
-
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+
 
 public class LLVMActions extends HelloBaseListener {
 
@@ -61,10 +57,10 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitCompare(HelloParser.CompareContext ctx) {
         //Value value1 = (Value)stack.pop();
-        Value value1 = (Value)stack.pop();
+        Value value1 = (Value) stack.pop();
 //        String operator = ctx.COMPARE().getText();
 //        LLVMGenerator.compare(value1, value2, operator);
-        new CompareOperation(value1, currentFunction,stack,ctx).operate(insideFunction);
+        new CompareOperation(value1, currentFunction, stack, ctx).operate(insideFunction);
 
     }
 
@@ -75,7 +71,7 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterWhile_start(HelloParser.While_startContext ctx) {
-        new EnterWhileOperation(currentFunction).operate(insideFunction);
+        new WhileStartOperation(currentFunction).operate(insideFunction);
     }
 
     @Override
@@ -235,7 +231,7 @@ public class LLVMActions extends HelloBaseListener {
             value.isGlobal = false;
         }
         // if we're not in function, get normal memory reference
-        else if(currentFunction == null) {
+        else if (currentFunction == null) {
             currentMemory = memory;
             // check if function call is being assigned. If so, our value will be a function
             if (ctx.function_call() != null) {
@@ -257,25 +253,8 @@ public class LLVMActions extends HelloBaseListener {
     public void exitMul(HelloParser.MulContext ctx) {
         Value value1 = (Value) stack.pop();
         Value value2 = (Value) stack.pop();
-        VarType varType;
-        String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value1.name, currentFunction, insideFunction);
-            } else {
-                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
-            }
-        } else {
-            varType = VarType.INT;
-            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
-        }
-        Value value = new Value(lineNo, varType);
-        stack.push(value);
+        new MultiplyOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+
     }
 
 
@@ -285,26 +264,6 @@ public class LLVMActions extends HelloBaseListener {
         Value value2 = (Value) stack.pop();
         new AddOperation(value1, value2, stack, currentFunction).operate(insideFunction);
 
-//        VarType varType;
-//        String lineNo;
-//        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-//            varType = VarType.REAL;
-//            if (value1.type == VarType.INT) {
-//                LLVMGenerator.sitofp(value1.name, currentFunction);
-//                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction);
-//            } else if (value2.type == VarType.INT) {
-//                LLVMGenerator.sitofp(value2.name, currentFunction);
-//                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction);
-//            } else {
-//                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction);
-//            }
-//
-//        } else {
-//            varType = VarType.INT;
-//            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
-//        }
-//        Value value = new Value(lineNo, varType);
-//        stack.push(value);
     }
 
 
@@ -312,25 +271,8 @@ public class LLVMActions extends HelloBaseListener {
     public void exitDivide(HelloParser.DivideContext ctx) {
         Value value2 = (Value) stack.pop();
         Value value1 = (Value) stack.pop();
-        VarType varType = VarType.REAL;
-        String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value1.name, currentFunction, insideFunction);
-            } else {
-                lineNo = LLVMGenerator.divideTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
-            }
-        } else {
-            LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-            LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-            lineNo = LLVMGenerator.divideTwoIntegers(currentFunction, insideFunction);
-        }
-        Value value = new Value(lineNo, varType);
-        stack.push(value);
+        new DivideOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+
     }
 
 
@@ -338,26 +280,7 @@ public class LLVMActions extends HelloBaseListener {
     public void exitSub(HelloParser.SubContext ctx) {
         Value value1 = (Value) stack.pop();
         Value value2 = (Value) stack.pop();
-        VarType varType;
-        String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.subIntFromReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.subIntFromReal1(value1.name, currentFunction, insideFunction);
-            } else {
-                lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name, currentFunction, insideFunction);
-            }
-        } else {
-            varType = VarType.INT;
-            lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name, currentFunction, insideFunction);
-        }
-        Value value = new Value(lineNo, varType);
-        stack.push(value);
-
+        new SubtractOperation(value1, value2, stack, currentFunction).operate(insideFunction);
 
     }
 

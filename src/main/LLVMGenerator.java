@@ -210,7 +210,7 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    static String multiplyTwoIntegers(String val1, String val2, Function currentFunction, boolean insideFunction) {
+   public static String multiplyTwoIntegers(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
             if(insideFunction){
                 currentFunction.operationCounter++;
@@ -229,7 +229,7 @@ public class LLVMGenerator {
     }
 
 
-    static String multiplyTwoDoubles(String val1, String val2, Function currentFunction, boolean insideFunction) {
+   public  static String multiplyTwoDoubles(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
             if(insideFunction){
                 currentFunction.operationCounter++;

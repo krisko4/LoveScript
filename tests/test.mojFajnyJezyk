@@ -1,6 +1,13 @@
 function(x){
-    x = x :+ 5
     return x
 }
-x = function(10)
-wypisz x
+x = function(5)
+y = function(3)
+z = x :+ y
+while(z < 12){
+   if(z == 10){
+    wypisz z
+   }
+   z = z :+ 1
+}
+
