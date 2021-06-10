@@ -32,7 +32,7 @@ public class PrintOperation extends Operation {
             Array array = (Array)container;
             array.values.forEach((key, value) -> {
                 String val = value.name;
-                value.name = LLVMGenerator.load(value.name, value, currentFunction);
+                value.name = LLVMGenerator.load(value.name, value, currentFunction, insideFunction);
                 LLVMGenerator.printf1(value, currentFunction);
                 value.name = val;
             });

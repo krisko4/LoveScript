@@ -44,7 +44,7 @@ public class LLVMActions extends HelloBaseListener {
         Array array = (Array) currentMemory.get(ctx.ID().getText());
         Value value = array.values.get(ctx.INT().getText());
         try {
-            String lineNo = LLVMGenerator.load(value.name, value, currentFunction);
+            String lineNo = LLVMGenerator.load(value.name, value, currentFunction, insideFunction);
             stack.push(new Value(lineNo, value.type, value.name));
         } catch (NullPointerException nullPointerException) {
             throw new RuntimeException("The value " + ctx.ID().getText() + "[" + ctx.INT().getText() + "] has not been defined. Line: " + ctx.getStart().getLine());
@@ -75,7 +75,7 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterWhile_start(HelloParser.While_startContext ctx) {
-        new WhileStartOperation(currentFunction).operate(insideFunction);
+        new EnterWhileOperation(currentFunction).operate(insideFunction);
     }
 
     @Override

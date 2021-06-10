@@ -34,10 +34,6 @@ public class IdExitOperation extends Operation {
 
 
     public void operate(boolean insideFunction) {
-        if (insideFunction) {
-            currentFunction.operations.add(this);
-            return;
-        }
         if (!currentMemory.containsKey(ctx.ID().getText())) {
             throw new RuntimeException(ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
         }
@@ -48,8 +44,11 @@ public class IdExitOperation extends Operation {
         }
         Value value = (Value) container;
         if (value.type != VarType.STRING) {
-            String lineNo = LLVMGenerator.load(ctx.ID().getText(), value, currentFunction);
+            String lineNo = LLVMGenerator.load(ctx.ID().getText(), value, currentFunction, insideFunction);
             stack.push(new Value(lineNo, value.type, ctx.ID().getText()));
+        }
+        if (insideFunction) {
+            currentFunction.operations.add(this);
         }
 
     }

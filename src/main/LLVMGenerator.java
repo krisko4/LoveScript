@@ -170,23 +170,28 @@ public class LLVMGenerator {
     }
 
 
-    public static String load(String id, Value value, Function currentFunction) {
+    public static String load(String id, Value value, Function currentFunction, boolean insideFunction) {
         String pointer = checkIfGlobal(value.isGlobal);
         if (id.startsWith("%")) {
             id = id.substring(1);
         }
         if (currentFunction != null) {
-            if (value.isParam) {
-                if (value.type == VarType.INT) {
-                    function_text += "%" + function_reg + " = load i32, i32* " + pointer + value.paramIndex + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                if (value.isParam) {
+                    if (value.type == VarType.INT) {
+                        function_text += "%" + function_reg + " = load i32, i32* " + pointer + value.paramIndex + "\n";
+                    } else {
+                        function_text += "%" + function_reg + " = load double, double* " + pointer + value.paramIndex + "\n";
+                    }
                 } else {
-                    function_text += "%" + function_reg + " = load double, double* " + pointer + value.paramIndex + "\n";
-                }
-            } else {
-                if (value.type == VarType.INT) {
-                    function_text += "%" + function_reg + " = load i32, i32* " + pointer + currentFunction.name + "." + id + "\n";
-                } else {
-                    function_text += "%" + function_reg + " = load double, double* " + pointer + currentFunction.name + "." + id + "\n";
+                    if (value.type == VarType.INT) {
+                        function_text += "%" + function_reg + " = load i32, i32* " + pointer + currentFunction.name + "." + id + "\n";
+                    } else {
+                        function_text += "%" + function_reg + " = load double, double* " + pointer + currentFunction.name + "." + id + "\n";
+                    }
                 }
             }
             String lineNo = "%" + function_reg;

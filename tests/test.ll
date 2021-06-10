@@ -9,19 +9,13 @@ define dso_local i32 @function(i32) nounwind {
 %2 = alloca i32
 store i32 %0, i32* %2
 %3 = load i32, i32* %2
-%4 = icmp sgt i32 %3, 5
-br i1 %4, label %true1, label %false1
-true1:
+%4 = add i32 5,%3
+store i32 %4, i32*  %2
 %5 = load i32, i32* %2
-%6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %5)
-br label %false1
-false1:
-store i32 6, i32*  %2
-%7 = load i32, i32* %2
-ret i32 %7
+ret i32 %5
 }
 define i32 @main() nounwind{
-%1 = call i32 @function(i32 3)
+%1 = call i32 @function(i32 10)
 store i32 %1, i32* @x
 %2 = load i32, i32* @x
 %3 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %2)
