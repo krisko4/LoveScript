@@ -18,9 +18,10 @@ public class LLVMGenerator {
     static String header_text = "";
     static String main_text = "";
     static int reg = 1;
-    static int function_reg = 1;
+    public static int function_reg = 1;
     static String function_header = "";
     static String function_text = "";
+    static int temp_reg = 1;
 
 
     static String generate() {
@@ -65,10 +66,9 @@ public class LLVMGenerator {
             String valueType = TypeMapper.mapToLLVM(value.type);
             String valueName = value.name;
             if (value.type == VarType.INT) {
-                function_text += "%" + function_reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), " +valueType  + " " + valueName + ")\n";
-            }
-            else if (value.type == VarType.REAL) {
-                function_text += "%" + function_reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), " +valueType+ " " + valueName + ")\n";
+                function_text += "%" + function_reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), " + valueType + " " + valueName + ")\n";
+            } else if (value.type == VarType.REAL) {
+                function_text += "%" + function_reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), " + valueType + " " + valueName + ")\n";
             }
             function_reg++;
             return;
@@ -94,7 +94,7 @@ public class LLVMGenerator {
         String type = TypeMapper.mapToLLVM(value.type);
 
         if (value.isGlobal) {
-            if(type.equals("i32")){
+            if (type.equals("i32")) {
                 header_text += "@" + id + " = global i32 0\n";
                 return;
             }
@@ -119,7 +119,7 @@ public class LLVMGenerator {
                               Value value,
                               Function function,
                               HelloParser.Assign_stmtContext ctx
-                              ) {
+    ) {
         String pointer;
         if (value.isGlobal) {
             pointer = "@";
@@ -142,7 +142,7 @@ public class LLVMGenerator {
             function_text += "store double " + value.name + ", double* " + pointer + function.name + "." + id + "\n";
             return;
         }
-        if(ctx.function_call() != null){
+        if (ctx.function_call() != null) {
             if (value.type == VarType.INT) {
                 main_text += "store i32 %" + (reg - 1) + ", i32* " + pointer + id + "\n";
             } else if (value.type == VarType.REAL) {
@@ -168,23 +168,19 @@ public class LLVMGenerator {
     }
 
 
-
     public static String load(String id, Value value, Function currentFunction) {
         String pointer = checkIfGlobal(value.isGlobal);
         if (id.startsWith("%")) {
             id = id.substring(1);
         }
         if (currentFunction != null) {
-            if(value.isParam){
-                if(value.type == VarType.INT){
+            if (value.isParam) {
+                if (value.type == VarType.INT) {
                     function_text += "%" + function_reg + " = load i32, i32* " + pointer + value.paramIndex + "\n";
-                }
-                else {
+                } else {
                     function_text += "%" + function_reg + " = load double, double* " + pointer + value.paramIndex + "\n";
                 }
-            }
-
-            else {
+            } else {
                 if (value.type == VarType.INT) {
                     function_text += "%" + function_reg + " = load i32, i32* " + pointer + currentFunction.name + "." + id + "\n";
                 } else {
@@ -246,22 +242,33 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String addTwoIntegers(String val1, String val2, Function currentFunction) {
+    public static String addTwoIntegers(String val1, String val2, Function currentFunction, boolean insideFunction) {
+        String lineNo;
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = add i32 " + val1 + "," + val2 + "\n";
-            String lineNo = "%" + function_reg;
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else{
+                function_text += "%" + function_reg + " = add i32 " + val1 + "," + val2 + "\n";
+            }
+            lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
         }
         main_text += "%" + reg + " = add i32 " + val1 + "," + val2 + "\n";
-        String lineNo = "%" + reg;
+        lineNo = "%" + reg;
         reg++;
         return lineNo;
     }
 
-    public static String addTwoDoubles(String val1, String val2, Function currentFunction) {
+    public static String addTwoDoubles(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fadd double " + val1 + "," + val2 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else{
+                function_text += "%" + function_reg + " = fadd double " + val1 + "," + val2 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -457,16 +464,16 @@ public class LLVMGenerator {
                 .filter(operation -> operation.operationType == OperationType.RETURN)
                 .findFirst()
                 .ifPresentOrElse((operation) -> {
-                    ReturnOperation returnOperation = (ReturnOperation)operation;
+                    ReturnOperation returnOperation = (ReturnOperation) operation;
                     currentFunction.type = returnOperation.value.type;
-                }, () ->{
-                            currentFunction.type = VarType.INT;
-                            isReturnPresent.set(false);
-                        });
-      //  if(returnOperation.isPresent()){
-       //     ReturnOperation operation = (ReturnOperation) returnOperation.get();
-       //     currentFunction.type = operation.value.type;
-      //  }
+                }, () -> {
+                    currentFunction.type = VarType.INT;
+                    isReturnPresent.set(false);
+                });
+        //  if(returnOperation.isPresent()){
+        //     ReturnOperation operation = (ReturnOperation) returnOperation.get();
+        //     currentFunction.type = operation.value.type;
+        //  }
         String functionType = TypeMapper.mapToLLVM(currentFunction.type);
         function_header += "define dso_local " + functionType + " @" + currentFunction.name + "(";
         for (int i = 0; i < currentFunction.params.size(); i++) {
@@ -483,10 +490,10 @@ public class LLVMGenerator {
             String paramType = TypeMapper.mapToLLVM(currentFunction.params.get(i).type);
             function_header += "%" + index + " = alloca " + paramType + "\n";
             function_header += "store " + paramType + " %" + i + ", " + paramType + "* " + "%" + index + "\n";
-          //  function_reg = index;
-          //  function_reg++;
+            //  function_reg = index;
+            //  function_reg++;
         }
-        if(!isReturnPresent.get()){
+        if (!isReturnPresent.get()) {
             function_text += "ret i32 0\n";
         }
 

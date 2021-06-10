@@ -4,17 +4,21 @@ declare i32 @scanf(i8*, ...)
 @strpd = constant [4 x i8] c"%f\0A\00"
 @strs = constant [3 x i8] c"%d\00"
 @strdd = constant [4 x i8] c"%lf\00"
-define dso_local i32 @fun(i32) nounwind {
+@x = global i32 0
+define dso_local i32 @function(i32) nounwind {
 %2 = alloca i32
 store i32 %0, i32* %2
-%3 = add i32 3,5
-store i32 %3, i32*  %2
-%4 = load i32, i32* %2
-%5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %4)
-ret i32 0
+%3 = add i32 5,5
+%4 = add i32 4,%3
+store i32 %4, i32*  %2
+%function.y = alloca i32
+store i32 5, i32* %function.y
+%5 = load i32, i32* %2
+ret i32 %5
 }
 define i32 @main() nounwind{
-%1 = call i32 @fun(i32 5)
-%2 = load i32, i32* %x
+%1 = call i32 @function(i32 5)
+store i32 %1, i32* @x
+%2 = load i32, i32* @x
 %3 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i32 %2)
 ret i32 0 }

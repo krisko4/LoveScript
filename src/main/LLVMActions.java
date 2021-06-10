@@ -35,11 +35,8 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitId(HelloParser.IdContext ctx) {
-        if (!currentMemory.containsKey(ctx.ID().getText())) {
-            throw new RuntimeException(ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
-        }
-        Container container = currentMemory.get(ctx.ID().getText());
-        new IdExitOperation(container, currentFunction, stack, ctx).operate(insideFunction);
+
+        new IdExitOperation(currentMemory, currentFunction, stack, ctx).operate(insideFunction);
     }
 
     @Override
@@ -56,7 +53,8 @@ public class LLVMActions extends HelloBaseListener {
 
     }
 
-    @Override public void enterFunction_start(HelloParser.Function_startContext ctx) {
+    @Override
+    public void enterFunction_start(HelloParser.Function_startContext ctx) {
         LLVMGenerator.function_reg = currentFunction.params.size() + 2;
     }
 
@@ -81,18 +79,18 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void enterFunction_stmt(HelloParser.Function_stmtContext ctx) {
         //   main.LLVMGenerator.enterFunction(ctx.ID().getText(), ctx.TYPE().getText());
-       // VarType type = TypeMapper.mapType(ctx.TYPE().getText());
+        // VarType type = TypeMapper.mapType(ctx.TYPE().getText());
         insideFunction = true;
         currentFunction = new Function(ctx.ID().getText(), VarType.UNDEFINED);
     }
 
     @Override
     public void exitFunction_stmt(HelloParser.Function_stmtContext ctx) {
-
         functions.add(currentFunction);
         temporaryMemory.clear();
         currentFunction = null;
         insideFunction = false;
+        currentMemory = memory;
     }
 
 
@@ -162,7 +160,12 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitFunction_call(HelloParser.Function_callContext ctx) {
-        currentFunction.generateLLVM();
+        if (!currentFunction.isConstructed) {
+            currentFunction.generateLLVM();
+            currentFunction.isConstructed = true;
+        } else {
+            LLVMGenerator.callFunction(currentFunction);
+        }
         currentFunction = null;
         insideFunctionCall = false;
         argNo = 0;
@@ -198,7 +201,7 @@ public class LLVMActions extends HelloBaseListener {
             value.isGlobal = false;
         }
         // if we're not in function, get normal memory reference
-        else {
+        else if(currentFunction == null) {
             currentMemory = memory;
             // check if function call is being assigned. If so, our value will be a function
             if (ctx.function_call() != null) {
@@ -246,25 +249,28 @@ public class LLVMActions extends HelloBaseListener {
     public void exitAdd(HelloParser.AddContext ctx) {
         Value value1 = (Value) stack.pop();
         Value value2 = (Value) stack.pop();
-        VarType varType;
-        String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction);
-            } else {
-                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction);
-            }
-        } else {
-            varType = VarType.INT;
-            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction);
-        }
-        Value value = new Value(lineNo, varType);
-        stack.push(value);
+        new AddOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+
+//        VarType varType;
+//        String lineNo;
+//        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
+//            varType = VarType.REAL;
+//            if (value1.type == VarType.INT) {
+//                LLVMGenerator.sitofp(value1.name, currentFunction);
+//                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction);
+//            } else if (value2.type == VarType.INT) {
+//                LLVMGenerator.sitofp(value2.name, currentFunction);
+//                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction);
+//            } else {
+//                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction);
+//            }
+//
+//        } else {
+//            varType = VarType.INT;
+//            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
+//        }
+//        Value value = new Value(lineNo, varType);
+//        stack.push(value);
     }
 
 

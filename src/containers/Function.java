@@ -13,6 +13,8 @@ public class Function extends Container {
     public boolean isDeclared;
     public String startLine;
     public List<Operation> operations;
+    public boolean isConstructed = false;
+    public int operationCounter = 0;
 
     public Function(String name, VarType type) {
         this.params = new ArrayList<>();
@@ -24,6 +26,7 @@ public class Function extends Container {
 
     public void generateLLVM(){
 
+        LLVMGenerator.function_reg = LLVMGenerator.function_reg - operationCounter;
         operations.forEach(operation -> {
             operation.operate(false);
         });

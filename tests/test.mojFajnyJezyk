@@ -1,7 +1,13 @@
-fun(x){
-   wypisz x
+function(x){
+    x = 5 :+ 5 :+ 4
+    y = 5
+    return x
 }
-fun(5)
+
+x = function(5)
+wypisz x
+
+
 
 
 

@@ -1,5 +1,6 @@
 package operations;
 
+import antlr.HelloParser;
 import containers.Container;
 import containers.Function;
 import containers.Value;
@@ -16,19 +17,16 @@ public class AddOperation extends Operation {
     private Stack<Container> stack;
 
 
-    public AddOperation(Value value1, Value value2, Stack<Container> stack, Function currentFunction){
-        this.value1 = value1;
-        this.value2 = value2;
+    public AddOperation(Value value1, Value value2, Stack<Container> stack, Function currentFunction) {
         this.stack = stack;
         this.currentFunction = currentFunction;
         this.operationType = OperationType.ADD;
+        this.value1 = value1;
+        this.value2 = value2;
+
     }
 
-    public void operate(boolean insideFunction){
-//        if(insideFunction){
-//            currentFunction.operations.add(this);
-//            return;
-//        }
+    public void operate(boolean insideFunction) {
         VarType varType;
         String lineNo;
         if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
@@ -40,14 +38,17 @@ public class AddOperation extends Operation {
                 LLVMGenerator.sitofp(value2.name, currentFunction);
                 lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction);
             } else {
-                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction);
+                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction);
+            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);
+        if (insideFunction) {
+            currentFunction.operations.add(this);
+        }
     }
 
 }
