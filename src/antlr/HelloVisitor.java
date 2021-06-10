@@ -47,6 +47,12 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIf_start(HelloParser.If_startContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#if_end}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIf_end(HelloParser.If_endContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HelloParser#elseif_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

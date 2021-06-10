@@ -2,6 +2,9 @@ package main;
 
 import antlr.HelloBaseListener;
 import antlr.HelloParser;
+import blocks.Block;
+import blocks.IfBlock;
+import blocks.WhileBlock;
 import containers.Array;
 import containers.Container;
 import containers.Function;
@@ -9,30 +12,38 @@ import containers.Value;
 import operations.*;
 import types.VarType;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class LLVMActions extends HelloBaseListener {
 
-    private final HashMap<String, Container> memory = new HashMap<>();
+    private final HashMap<String, Container> globalMemory = new HashMap<>();
     private final HashMap<String, Container> temporaryMemory = new HashMap<>();
     private HashMap<String, Container> currentMemory = new HashMap<>();
-    private final Stack<Container> stack = new Stack<>();
+
+    private Stack<Container> stack = new Stack<>();
     private Function currentFunction = null;
     private boolean insideFunction = false;
     private boolean insideFunctionCall = false;
+    private int functionIndex = 0;
     private int argNo = 0;
+    private Block block;
+    private boolean insideBlock = false;
+    private String blockName = null;
+    private int ifBlockNumber = 0;
+    private int whileBlockNumber = 0;
     private final List<Function> functions = new ArrayList<>();
 
     @Override
     public void exitPrint_stmt(HelloParser.Print_stmtContext ctx) {
-        new PrintOperation(currentFunction, stack).operate(insideFunction);
+        new PrintOperation(currentFunction, stack, block).operate(insideFunction);
     }
 
 
     @Override
     public void exitId(HelloParser.IdContext ctx) {
 
-        new IdExitOperation(currentMemory, currentFunction, stack, ctx).operate(insideFunction);
+        new IdExitOperation(currentMemory, globalMemory, currentFunction, stack, ctx, block).operate(insideFunction);
     }
 
     @Override
@@ -40,8 +51,8 @@ public class LLVMActions extends HelloBaseListener {
         Array array = (Array) currentMemory.get(ctx.ID().getText());
         Value value = array.values.get(ctx.INT().getText());
         try {
-            String lineNo = LLVMGenerator.load(value.name, value, currentFunction, insideFunction);
-            stack.push(new Value(lineNo, value.type, value.name));
+            String lineNo = LLVMGenerator.load(value.name, value, currentFunction, insideFunction, block);
+            stack.push(new Value(lineNo, value.type, value.isGlobal, value.name));
         } catch (NullPointerException nullPointerException) {
             throw new RuntimeException("The value " + ctx.ID().getText() + "[" + ctx.INT().getText() + "] has not been defined. Line: " + ctx.getStart().getLine());
         }
@@ -51,7 +62,9 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterFunction_start(HelloParser.Function_startContext ctx) {
-        LLVMGenerator.function_reg = currentFunction.params.size() + 2;
+        if(!currentMemory.isEmpty()){
+            LLVMGenerator.function_reg = currentFunction.params.get(currentFunction.params.size() - 1).paramIndex + 1;
+        }
     }
 
     @Override
@@ -71,29 +84,69 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterWhile_start(HelloParser.While_startContext ctx) {
+       // insideBlock = true;
+        whileBlockNumber++;
+        block = new WhileBlock(whileBlockNumber);
+        currentMemory = new HashMap<>();
+        if(currentFunction != null){
+            if(!currentFunction.params.isEmpty()){
+                currentFunction.params.forEach(param -> {
+                    currentMemory.put(param.variable, param);
+                });
+            }
+        }
         new WhileStartOperation(currentFunction).operate(insideFunction);
     }
 
     @Override
     public void enterIf_start(HelloParser.If_startContext ctx) {
-        new EnterIfOperation(currentFunction).operate(insideFunction);
+        ifBlockNumber++;
+        block = new IfBlock(ifBlockNumber);
+        currentMemory = new HashMap<>();
+        if(currentFunction != null){
+            if(!currentFunction.params.isEmpty()){
+                currentFunction.params.forEach(param -> {
+                    currentMemory.put(param.variable, param);
+                });
+            }
+        }
+
+        new EnterIfOperation(currentFunction, currentMemory).operate(insideFunction);
+    }
+
+    @Override
+    public void enterIf_end(HelloParser.If_endContext ctx) {
+        new ExitIfOperation(currentFunction).operate(insideFunction);
     }
 
     @Override
     public void exitWhile_stmt(HelloParser.While_stmtContext ctx) {
+        currentMemory = globalMemory;
+        block = null;
         new ExitWhileOperation(currentFunction).operate(insideFunction);
     }
 
     @Override
     public void exitIf_stmt(HelloParser.If_stmtContext ctx) {
-        new ExitIfOperation(currentFunction).operate(insideFunction);
+        currentMemory = globalMemory;
+        block = null;
+        new CloseIfOperation(currentFunction).operate(insideFunction);
     }
+
+//    @Override
+//    public void enterElse_stmt(HelloParser.Else_stmtContext ctx) {
+//        new EnterElseOperation(currentFunction).operate(insideFunction);
+//    }
+
+//    @Override
+//    public void exitElse_stmt(HelloParser.Else_stmtContext ctx) {
+//        new ExitElseOperation(currentFunction).operate(insideFunction);
+//    }
 
     // Insert function parameters into memory with correct LLVM indices
     @Override
     public void exitFunction_param(HelloParser.Function_paramContext ctx) {
-        Value value = new Value(null, VarType.UNDEFINED, ctx.ID().getText());
-        value.isGlobal = false;
+        Value value = new Value(null, VarType.UNDEFINED,false, true, ctx.ID().getText());
         value.isParam = true;
         currentFunction.params.add(value);
         currentMemory.put(ctx.ID().getText(), value);
@@ -108,19 +161,19 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterFunction_stmt(HelloParser.Function_stmtContext ctx) {
-        //   main.LLVMGenerator.enterFunction(ctx.ID().getText(), ctx.TYPE().getText());
-        // VarType type = TypeMapper.mapType(ctx.TYPE().getText());
+        currentMemory = new HashMap<>();
         insideFunction = true;
-        currentFunction = new Function(ctx.ID().getText(), VarType.UNDEFINED);
+        currentFunction = new Function(ctx.ID().getText(), VarType.UNDEFINED, stack, functionIndex);
+        functionIndex++;
     }
 
     @Override
     public void exitFunction_stmt(HelloParser.Function_stmtContext ctx) {
         functions.add(currentFunction);
-        temporaryMemory.clear();
+        stack = new Stack<>();
         currentFunction = null;
         insideFunction = false;
-        currentMemory = memory;
+        currentMemory = globalMemory;
     }
 
 
@@ -144,17 +197,24 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitReal(HelloParser.RealContext ctx) {
         if (insideFunctionCall) {
-            currentFunction.params.get(argNo).name = ctx.REAL().getText();
-            currentFunction.params.get(argNo).type = VarType.REAL;
+            Value param = currentFunction.params.get(argNo);
+            param.type = VarType.REAL;
+            param.name = ctx.REAL().getText();
+            stack.push(param);
             argNo++;
+            return;
         }
-        stack.push(new Value(ctx.REAL().getText(), VarType.REAL));
+        if (insideFunction) {
+            stack.push(new Value(ctx.REAL().getText(), VarType.REAL, false, false));
+            return;
+        }
+        stack.push(new Value(ctx.REAL().getText(), VarType.REAL, true, false));
     }
 
     @Override
     public void exitString(HelloParser.StringContext ctx) {
         String text = ctx.STRING().getText().replace("\"", "");
-        stack.push(new Value(text, VarType.STRING));
+        stack.push(new Value(text, VarType.STRING, true, null));
     }
 
 
@@ -170,7 +230,7 @@ public class LLVMActions extends HelloBaseListener {
                 } else {
                     value = new Value(ID, VarType.REAL);
                 }
-                LLVMGenerator.declare(value.name, value, currentFunction);
+                LLVMGenerator.declare(value.name, value, currentFunction, block);
                 String lineNo = LLVMGenerator.scanf(ID, value.type);
                 Value val = new Value(lineNo, value.type);
                 currentMemory.put(ID, val);
@@ -188,6 +248,8 @@ public class LLVMActions extends HelloBaseListener {
     }
 
 
+
+
     @Override
     public void exitFunction_call(HelloParser.Function_callContext ctx) {
         if (!currentFunction.isConstructed) {
@@ -203,15 +265,22 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void enterFunction_call(HelloParser.Function_callContext ctx) {
-        currentFunction = functions.stream()
-                .filter(function -> function.name.equals(ctx.ID().getText()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Function " + ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine()));
-        if (ctx.expression().size() != currentFunction.params.size()) {
-            throw new RuntimeException("Arguments quantity mismatch. Function " + ctx.ID().getText()
-                    + " has " + currentFunction.params.size() + " argument/s." +
-                    " You are calling " + ctx.expression().size() + " argument/s. Line: " + ctx.getStart().getLine());
+
+        List<Function> foundFunctions = functions.stream().filter(function ->
+                function.name.equals(ctx.ID().getText())
+        ).collect(Collectors.toList());
+        if(foundFunctions.isEmpty()){
+            throw new RuntimeException("Function " + ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
         }
+        int size = foundFunctions.get(0).params.size();
+        currentFunction = foundFunctions.stream()
+                .filter(function -> function.params.size() == ctx.expression().size())
+                .findFirst()
+                .orElseThrow(()->new RuntimeException("Arguments quantity mismatch. Function " + ctx.ID().getText()
+                + " has " + size + " argument/s." +
+                " You are calling " + ctx.expression().size() + " argument/s. Line: " + ctx.getStart().getLine()));
+        stack = currentFunction.getStack();
+        LLVMGenerator.function_reg = currentFunction.params.get(currentFunction.params.size() - 1).paramIndex + 1;
         insideFunctionCall = true;
 
 
@@ -226,26 +295,39 @@ public class LLVMActions extends HelloBaseListener {
         // assign variable to value
         value.variable = ID;
         // if we're in function and variable is a function parameter
-        if (currentMemory.containsKey(ID) && currentFunction != null) {
-            value.isParam = true;
-            value.isGlobal = false;
-        }
-        // if we're not in function, get normal memory reference
-        else if (currentFunction == null) {
-            currentMemory = memory;
-            // check if function call is being assigned. If so, our value will be a function
-            if (ctx.function_call() != null) {
-                Function function = functions.stream()
-                        .filter(function1 -> function1.name.equals(ctx.function_call().ID().getText()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Invalid function call. Line: " + ctx.getStart().getLine()));
-                value.type = function.type;
-                value.name = function.name;
+        if(currentFunction != null){
+          //  if(currentMemory.containsKey(ID)){
+          //      value.isParam = true;
+          //      value.isGlobal = false;
+          //      currentMemory.get(ID).name = value.name;
+          //  }
+             if(globalMemory.containsKey(ID)){
                 value.isGlobal = true;
-                value.isParam = false;
             }
         }
-        new AssignOperation(value, currentFunction, currentMemory, memory, stack, ctx, functions).operate(insideFunction);
+
+        // if we're not in function, get normal memory reference
+        else {
+                if(block == null){
+                    currentMemory = globalMemory;
+                    // check if function call is being assigned. If so, our value will be a function
+                    if (ctx.function_call() != null) {
+                        Function function = functions.stream()
+                                .filter(function1 -> function1.name.equals(ctx.function_call().ID().getText()))
+                                .findFirst()
+                                .orElseThrow(() -> new RuntimeException("Invalid function call. Line: " + ctx.getStart().getLine()));
+                        value.type = function.type;
+                        value.name = function.name;
+                        value.isGlobal = true;
+                        value.isParam = false;
+
+                    }
+
+
+            }
+        }
+        new AssignOperation(value, currentFunction, currentMemory, globalMemory, stack, ctx, functions, block).operate(insideFunction);
+
     }
 
 

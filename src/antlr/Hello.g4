@@ -14,9 +14,10 @@ statement: print_stmt
            | while_stmt;
 
 while_stmt: WHILE OPENBRACKET expression CLOSEBRACKET while_start statement* CLOSEBLOCK;
-if_stmt: IF OPENBRACKET expression CLOSEBRACKET if_start statement* CLOSEBLOCK (elseif_stmt)* (else_stmt)?;
+if_stmt: IF OPENBRACKET expression CLOSEBRACKET if_start statement* if_end (elseif_stmt)* (else_stmt)?;
 while_start: OPENBLOCK;
 if_start: OPENBLOCK;
+if_end: CLOSEBLOCK;
 elseif_stmt: ELSEIF OPENBRACKET expression CLOSEBRACKET OPENBLOCK statement* CLOSEBLOCK;
 else_stmt: ELSE OPENBLOCK statement* CLOSEBLOCK;
 function_stmt:  ID OPENBRACKET function_param?(',' function_param)*  CLOSEBRACKET function_start statement* CLOSEBLOCK;
@@ -52,12 +53,12 @@ val:
  | '(' expression ')' #priorityExpression;
 
 WHILE: 'while';
-COMPARE: '<' | '>' | '<=' | '>=' | '==';
+COMPARE: '<' | '>' | '<=' | '>=' | '=='; // < > <= >= ==
 IF: 'if';
 ELSEIF: 'else if';
 ELSE: 'else';
 RETURN: 'return';
-ARRAY: 'array';
+ARRAY: 'couple';
 OPENBLOCK: '{';
 CLOSEBLOCK: '}';
 OPENARRAY: '[';
@@ -66,16 +67,16 @@ OPENBRACKET: '(';
 CLOSEBRACKET: ')';
 TOINT: '(int)';
 TOREAL: '(real)';
-DIVIDE: '/';
-MULT: '*';
-MINUS: ':-';
-PLUS: ':+';
+DIVIDE: ':/';
+MULT: ':*';
+MINUS: ':(';
+PLUS: ':)';
 STRING : '"'[a-zA-Z0-9_ ]* '"';
-ASSIGN : '=';
+ASSIGN : '<3';
 TO : 'do';
 TYPE: 'INT' | 'REAL' | 'STRING';
-PRINT: 'wypisz';
-READ: 'odczytaj';
+PRINT: 'flirt';
+READ: 'listen';
 NEWLINE: [\r\n] -> skip;
 ID:   [a-zA-Z][a-zA-Z0-9_]*;
 WS : [ \t] -> skip;

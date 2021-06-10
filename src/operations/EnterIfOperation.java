@@ -1,12 +1,18 @@
 package operations;
 
+import containers.Container;
 import containers.Function;
 import main.LLVMGenerator;
 
+import java.util.HashMap;
+
 public class EnterIfOperation extends Operation {
 
-    public EnterIfOperation(Function currentFunction){
+    private HashMap<String, Container> currentMemory;
+
+    public EnterIfOperation(Function currentFunction, HashMap<String, Container> currentMemory){
         this.currentFunction = currentFunction;
+        this.currentMemory = currentMemory;
     }
 
     public void operate(boolean insideFunction){
@@ -14,7 +20,7 @@ public class EnterIfOperation extends Operation {
             currentFunction.operations.add(this);
             return;
         }
-        LLVMGenerator.generateIf(currentFunction);
+        LLVMGenerator.enterIf(currentFunction);
     }
 
 }

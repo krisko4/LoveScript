@@ -1,9 +1,11 @@
 package main;
 
 import antlr.HelloParser;
+import blocks.Block;
 import containers.Function;
 import containers.Value;
 import operations.ReturnOperation;
+import types.CompareMapper;
 import types.OperationType;
 import types.TypeMapper;
 import types.VarType;
@@ -11,7 +13,6 @@ import types.VarType;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LLVMGenerator {
@@ -25,21 +26,29 @@ public class LLVMGenerator {
     static int temp_reg = 1;
     private static int ifCounter = 0;
     private static int whileCounter = 0;
+    private static String functionZone = "";
+
 
     static String generate() {
+
+
         String text = "";
         text += "declare i32 @printf(i8*, ...)\n";
         text += "declare i32 @scanf(i8*, ...)\n";
         text += "@strpi = constant [4 x i8] c\"%d\\0A\\00\"\n";
         text += "@strpd = constant [4 x i8] c\"%f\\0A\\00\"\n";
         text += "@strs = constant [3 x i8] c\"%d\\00\"\n";
+        text += "@strps = constant [4 x i8] c\"%s\\0A\\00\"";
         text += "@strdd = constant [4 x i8] c\"%lf\\00\"\n";
+        text += functionZone;
+    //    text += function_header;
+     //   text += function_text;
         text += header_text;
-        text += function_header;
-        text += function_text;
         text += "define i32 @main() nounwind{\n";
         text += main_text;
         text += "ret i32 0 }\n";
+
+
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("./tests/test.ll"));
             writer.write(text);
@@ -82,7 +91,7 @@ public class LLVMGenerator {
             main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double " + (value.name) + ")\n";
 
         } else if (value.variable != null) {
-            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([" + length + " x i8], [" + length + " x i8]* " + value.variable + ", i32 0, i32 0))\n";
+            main_text += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strps, i32 0, i32 0), i8* " + value.name + ")\n";
 
         } else {
             header_text += "@str" + reg + " = private constant [" + length + " x i8] c\"" + value.name + "\\0A\\00\"\n";
@@ -92,15 +101,22 @@ public class LLVMGenerator {
 
     }
 
-    public static void declare(String id, Value value, Function function) {
+    public static void declare(String id, Value value, Function function, Block block) {
         String type = TypeMapper.mapToLLVM(value.type);
-
+        if(block != null && !value.isGlobal){
+            id = block.getName() + "." + id;
+        }
         if (value.isGlobal) {
             if (type.equals("i32")) {
                 header_text += "@" + id + " = global i32 0\n";
                 return;
             }
-            header_text += "@" + id + " = global double 0.0\n";
+            else if(type.equals("double")){
+                header_text += "@" + id + " = global double 0.0\n";
+                return;
+            }
+            int length =  value.name.length() + 1;
+            header_text += "@" + id + " = private constant [" + length + " x i8] c\"" + value.name + "\\00\"\n";
             return;
         }
         if (function != null) {
@@ -109,7 +125,7 @@ public class LLVMGenerator {
                 function_reg++;
                 return;
             }
-            function_text += "%" + function.name + "." + id + " = alloca " + type + "\n";
+            function_text += "%" + function.name + function.getIndex() + "." + id + " = alloca " + type + "\n";
             return;
         }
         main_text += "%" + id + " = alloca " + type + "\n";
@@ -120,8 +136,12 @@ public class LLVMGenerator {
     public static void assign(String id,
                               Value value,
                               Function function,
-                              HelloParser.Assign_stmtContext ctx
+                              HelloParser.Assign_stmtContext ctx,
+                              Block block
     ) {
+        if(block != null && !value.isGlobal){
+            id = block.getName() + "." + id;
+        }
         String pointer;
         if (value.isGlobal) {
             pointer = "@";
@@ -134,14 +154,22 @@ public class LLVMGenerator {
                     function_text += "store i32 " + value.name + ", i32* " + " %" + value.paramIndex + "\n";
                     return;
                 }
-                function_text += "store i32 " + value.name + ", i32* " + pointer + function.name + "." + id + "\n";
+                if(value.isGlobal){
+                    function_text += "store i32 " + value.name + ", i32* " + pointer + id + "\n";
+                    return;
+                }
+                function_text += "store i32 " + value.name + ", i32* " + pointer + function.name + function.getIndex() + "." + id + "\n";
+                return;
+            }
+            if(value.isGlobal){
+                function_text += "store double " + value.name + ", double* " + pointer + id + "\n";
                 return;
             }
             if (value.isParam) {
                 function_text += "store double " + value.name + ", double* " + " %" + value.paramIndex + "\n";
                 return;
             }
-            function_text += "store double " + value.name + ", double* " + pointer + function.name + "." + id + "\n";
+            function_text += "store double " + value.name + ", double* " + pointer + function.name + function.getIndex() + "." + id + "\n";
             return;
         }
         if (ctx.function_call() != null) {
@@ -156,9 +184,6 @@ public class LLVMGenerator {
             main_text += "store i32 " + value.name + ", i32* " + pointer + id + "\n";
         } else if (value.type == VarType.REAL) {
             main_text += "store double " + value.name + ", double* " + pointer + id + "\n";
-        } else {
-            int length = value.name.length() + 2;
-            header_text += "@" + id + " = private constant [" + length + " x i8] c\"" + value.name + "\\0A\\00\"\n";
         }
     }
 
@@ -170,7 +195,10 @@ public class LLVMGenerator {
     }
 
 
-    public static String load(String id, Value value, Function currentFunction, boolean insideFunction) {
+    public static String load(String id, Value value, Function currentFunction, boolean insideFunction, Block block) {
+        if(block != null && !value.isGlobal){
+            id = block.getName() + "." + id;
+        }
         String pointer = checkIfGlobal(value.isGlobal);
         if (id.startsWith("%")) {
             id = id.substring(1);
@@ -188,9 +216,20 @@ public class LLVMGenerator {
                     }
                 } else {
                     if (value.type == VarType.INT) {
-                        function_text += "%" + function_reg + " = load i32, i32* " + pointer + currentFunction.name + "." + id + "\n";
+                        if(value.isGlobal){
+                            function_text += "%" + function_reg + " = load i32, i32* " + pointer + id + "\n";
+                        }
+                        else{
+                            function_text += "%" + function_reg + " = load i32, i32* " + pointer + currentFunction.name + "." + id + "\n";
+                        }
                     } else {
-                        function_text += "%" + function_reg + " = load double, double* " + pointer + currentFunction.name + "." + id + "\n";
+                        if(value.isGlobal){
+                            function_text += "%" + function_reg + " = load double, double* " + pointer + id + "\n";
+                        }
+                        else{
+                            function_text += "%" + function_reg + " = load double, double* " + pointer + currentFunction.name + "." + id + "\n";
+                        }
+
                     }
                 }
             }
@@ -204,6 +243,10 @@ public class LLVMGenerator {
         }
         if (value.type == VarType.REAL) {
             main_text += "%" + reg + " = load double, double* " + pointer + id + "\n";
+        }
+        if(value.type == VarType.STRING) {
+            int length =  value.name.length() + 1;
+            main_text += "%" + reg+ " = getelementptr inbounds [" + length + " x i8], [" + length + " x i8]* " + pointer + id + ", i32 0, i32 0\n";
         }
         String lineNo = "%" + reg;
         reg++;
@@ -522,7 +565,7 @@ public class LLVMGenerator {
 
     public static String callFunction(Function function) {
         String type = TypeMapper.mapToLLVM(function.type);
-        main_text += "%" + reg + " = call " + type + " @" + function.name + "(";
+        main_text += "%" + reg + " = call " + type + " @" + function.name + function.getIndex() + "(";
         for (int i = 0; i < function.params.size(); i++) {
             String paramType = TypeMapper.mapToLLVM(function.params.get(i).type);
             if (function.params.size() == 1 || i == function.params.size() - 1) {
@@ -549,12 +592,8 @@ public class LLVMGenerator {
                     currentFunction.type = VarType.INT;
                     isReturnPresent.set(false);
                 });
-        //  if(returnOperation.isPresent()){
-        //     ReturnOperation operation = (ReturnOperation) returnOperation.get();
-        //     currentFunction.type = operation.value.type;
-        //  }
         String functionType = TypeMapper.mapToLLVM(currentFunction.type);
-        function_header += "define dso_local " + functionType + " @" + currentFunction.name + "(";
+        function_header += "define dso_local " + functionType + " @" + currentFunction.name + currentFunction.getIndex() + "(";
         for (int i = 0; i < currentFunction.params.size(); i++) {
             String paramType = TypeMapper.mapToLLVM(currentFunction.params.get(i).type);
             if (currentFunction.params.size() == 1 || i == currentFunction.params.size() - 1) {
@@ -580,43 +619,18 @@ public class LLVMGenerator {
 
     public static void closeFunction() {
         function_text += "}\n";
-    }
-
-    public static void compare(Value value1, Value value2, String operator, Function currentFunction) {
-        String llvmOperator;
-        switch(operator){
-            case ">":
-                llvmOperator = "sgt";
-                break;
-            case "<":
-                llvmOperator = "slt";
-                break;
-            case "==":
-                llvmOperator = "eq";
-                break;
-            case "<=":
-                llvmOperator = "sle";
-                break;
-            case ">=":
-                llvmOperator = "sge";
-                break;
-            default:
-                throw new RuntimeException("Invalid compare operator");
-        }
-        if(currentFunction != null){
-            function_text += "%" + function_reg + " = icmp " + llvmOperator + " i32 " + value2.name + ", " + value1.name + "\n";
-            function_reg++;
-            return;
-        }
-        main_text += "%" + reg + " = icmp " + llvmOperator + " i32 " + value2.name + ", " + value1.name + "\n";
-        reg++;
-
+        functionZone += function_header;
+        functionZone += function_text;
+        function_text = "";
+        function_header = "";
     }
 
 
 
 
-    public static void generateIf(Function currentFunction) {
+
+
+    public static void enterIf(Function currentFunction) {
         ifCounter ++;
         if(currentFunction != null){
             function_text += "br i1 %" + (function_reg - 1) + ", label %true" + ifCounter + ", label %false" + ifCounter + "\ntrue" + ifCounter + ":\n";
@@ -625,12 +639,16 @@ public class LLVMGenerator {
         main_text += "br i1 %" + (reg - 1) + ", label %true" + ifCounter + ", label %false" + ifCounter + "\ntrue" + ifCounter + ":\n";
     }
 
+
     public static void closeIf(Function currentFunction) {
         if(currentFunction != null){
-            function_text += "br label %false" + ifCounter + "\nfalse" + ifCounter + ":\n";
+            function_text += "br label %endif" + ifCounter + "\n";
+            function_text += "endif" + ifCounter + ":\n";
+
             return;
         }
-        main_text += "br label %false" + ifCounter + "\nfalse" + ifCounter + ":\n";
+        main_text += "br label %endif" + ifCounter + "\n";
+        main_text += "endif" + ifCounter + ":\n";
     }
 
     public static void generateWhile(Function currentFunction) {
@@ -667,4 +685,66 @@ public class LLVMGenerator {
         main_text += "br i1 %" + (reg - 1) + ", label %whiletrue" + whileCounter + ", label %whilefalse" + whileCounter + "\n";
         main_text += "whiletrue" + whileCounter + ":\n";
     }
+
+
+
+    public static void compareIntAndDouble(String value1, String value2, String operator, Function currentFunction) {
+        String llvmOperator = CompareMapper.mapToLLVM(operator, VarType.REAL);
+        if(currentFunction != null){
+            function_text += "%" + function_reg + " = fcmp " + llvmOperator + " double " +   value2 + ", "  + value1 +  "\n";
+            function_reg++;
+            return;
+        }
+        main_text += "%" + reg + " = fcmp " + llvmOperator + " double "   + value2 + ", " + value1 + "\n";
+        reg++;
+    }
+
+    public static void compareTwoDoubles(Value value1, Value value2, String operator, Function currentFunction) {
+        String llvmOperator = CompareMapper.mapToLLVM(operator, VarType.REAL);
+        if(currentFunction != null){
+            function_text += "%" + function_reg + " = fcmp " + llvmOperator + " double " +   value2.name + ", "  + value1.name +  "\n";
+            function_reg++;
+            return;
+        }
+        main_text += "%" + reg + " = fcmp " + llvmOperator + " double "   + value2.name + ", " + value1.name + "\n";
+        reg++;
+    }
+
+    public static void compareTwoIntegers(Value value1, Value value2, String operator, Function currentFunction) {
+        String llvmOperator = CompareMapper.mapToLLVM(operator, VarType.INT);
+        if(currentFunction != null){
+            function_text += "%" + function_reg + " = icmp " + llvmOperator + " i32 " +   value2.name + ", "  + value1.name +  "\n";
+            function_reg++;
+            return;
+        }
+        main_text += "%" + reg + " = icmp " + llvmOperator + " i32 "   + value2.name + ", " + value1.name + "\n";
+        reg++;
+    }
+
+//    public static void enterElse(Function currentFunction) {
+//        if(currentFunction != null){
+//            function_text += "false" + ifCounter + ":\n";
+//            return;
+//        }
+//        main_text += "false" + ifCounter + ":\n";
+//    }
+
+    public static void jumpToEndif(Function currentFunction) {
+        if(currentFunction != null){
+            function_text += "br label %endif" + ifCounter + "\n";
+            return;
+        }
+        main_text += "br label %endif" + ifCounter + "\n";
+    }
+
+    public static void exitIf(Function currentFunction){
+        if(currentFunction != null){
+            function_text += "br label %endif" + ifCounter + "\n";
+            function_text += "false" + ifCounter + ":\n";
+            return;
+        }
+        main_text += "br label %endif" + ifCounter + "\n";
+        main_text += "false" + ifCounter + ":\n";
+    }
+
 }

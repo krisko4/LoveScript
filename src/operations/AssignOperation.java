@@ -1,6 +1,7 @@
 package operations;
 
 import antlr.HelloParser;
+import blocks.Block;
 import containers.Array;
 import containers.Container;
 import containers.Function;
@@ -17,25 +18,25 @@ public class AssignOperation extends Operation {
 
     private Value value;
     private HashMap<String, Container> currentMemory;
-    private HashMap<String, Container> memory;
+    private HashMap<String, Container> globalMemory;
     private Stack<Container> stack;
     private HelloParser.Assign_stmtContext ctx;
     private List<Function> functions;
+    private Block block;
 
 
-    public AssignOperation(Value value) {
-
-    }
 
     public AssignOperation(
             Value value,
             Function currentFunction,
             HashMap<String, Container> currentMemory,
-            HashMap<String, Container> memory,
+            HashMap<String, Container> globalMemory,
             Stack<Container> stack,
             HelloParser.Assign_stmtContext ctx,
-            List<Function> functions) {
-        this.memory = memory;
+            List<Function> functions,
+            Block block
+            ) {
+        this.globalMemory = globalMemory;
         this.value = value;
         this.currentFunction = currentFunction;
         this.currentMemory = currentMemory;
@@ -43,6 +44,7 @@ public class AssignOperation extends Operation {
         this.ctx = ctx;
         this.functions = functions;
         this.operationType = OperationType.ASSIGN;
+        this.block = block;
     }
 
     public void operate(boolean insideFunction) {
@@ -50,23 +52,26 @@ public class AssignOperation extends Operation {
             currentFunction.operations.add(this);
             return;
         }
-        if (!currentMemory.containsKey(value.variable)) {
+        if (!currentMemory.containsKey(value.variable) && !globalMemory.containsKey(value.variable)) {
+            if(block != null){
+                value.isGlobal = false;
+            }
             switch (value.type) {
                 case ARRAY:
                     Array array = new Array(value.variable, value.name);
                     currentMemory.put(value.variable, array);
                     return;
-                case STRING:
-                    value.variable = "@" + value.variable;
-                    stack.push(value);
-                    return;
                 default:
-                    LLVMGenerator.declare(value.variable, value, currentFunction);
-                    LLVMGenerator.assign(value.variable, value, currentFunction, ctx);
+                    LLVMGenerator.declare(value.variable, value, currentFunction, block);
+                    LLVMGenerator.assign(value.variable, value, currentFunction, ctx, block);
                     currentMemory.put(value.variable, value);
                     return;
             }
         }
+        if(!currentMemory.containsKey(value.variable)){
+            currentMemory.put(value.variable, globalMemory.get(value.variable));
+        }
+
         Container previousVal = currentMemory.get(value.variable);
         if (previousVal.getClass() == Array.class) {
             Array array = (Array) previousVal;
@@ -95,7 +100,7 @@ public class AssignOperation extends Operation {
         if (previousVal.type != value.type) {
             throw new RuntimeException("Mismatched types. Cannot convert " + previousVal.type + " to " + value.type + ". Line: " + ctx.getStart().getLine());
         }
-        LLVMGenerator.assign(value.variable, value, currentFunction, ctx);
+        LLVMGenerator.assign(value.variable, value, currentFunction, ctx, block);
         currentMemory.replace(value.variable, value);
     }
 }

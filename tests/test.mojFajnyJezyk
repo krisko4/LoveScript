@@ -1,13 +1,17 @@
 function(x){
+    while(x<10){
+        x = x :+ 1
+        wypisz x
+    }
+}
+
+function(4)
+x = 32
+if(x<5){
     return x
 }
-x = function(5)
-y = function(3)
-z = x :+ y
-while(z < 12){
-   if(z == 10){
-    wypisz z
-   }
-   z = z :+ 1
-}
+
+
+
+
 
