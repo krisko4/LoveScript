@@ -7,7 +7,7 @@ null
 'else if'
 'else'
 'return'
-'array'
+'couple'
 '{'
 '}'
 '['
@@ -16,16 +16,16 @@ null
 ')'
 '(int)'
 '(real)'
-'/'
-'*'
-':-'
-':+'
+':/'
+':*'
+':('
+':)'
 null
-'='
+'<3'
 'do'
 null
-'wypisz'
-'odczytaj'
+'flirt'
+'listen'
 null
 null
 null

@@ -1,23 +1,23 @@
-package operations;
+package operations.calc_operations;
 
-import antlr.HelloParser;
 import containers.Container;
 import containers.Function;
 import containers.Value;
 import main.LLVMGenerator;
+import operations.Operation;
 import types.OperationType;
 import types.VarType;
 
 import java.util.Stack;
 
-public class AddOperation extends Operation {
+public class MultiplyOperation extends Operation {
 
     private Value value1;
     private Value value2;
     private Stack<Container> stack;
 
 
-    public AddOperation(Value value1, Value value2, Stack<Container> stack, Function currentFunction) {
+    public MultiplyOperation(Value value1, Value value2, Stack<Container> stack, Function currentFunction) {
         this.stack = stack;
         this.currentFunction = currentFunction;
         this.operationType = OperationType.ADD;
@@ -33,22 +33,21 @@ public class AddOperation extends Operation {
             varType = VarType.REAL;
             if (value1.type == VarType.INT) {
                 LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value2.name, currentFunction, insideFunction);
             } else if (value2.type == VarType.INT) {
                 LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value1.name, currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
+            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
         }
-        Value value = new Value(lineNo, varType, true, false);
+        Value value = new Value(lineNo, varType);
         stack.push(value);
         if (insideFunction) {
             currentFunction.operations.add(this);
         }
     }
-
 }

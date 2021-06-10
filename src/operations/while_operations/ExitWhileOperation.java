@@ -1,11 +1,12 @@
-package operations;
+package operations.while_operations;
 
 import containers.Function;
 import main.LLVMGenerator;
+import operations.Operation;
 
-public class CloseIfOperation extends Operation {
+public class ExitWhileOperation extends Operation {
 
-    public CloseIfOperation(Function currentFunction){
+    public ExitWhileOperation(Function currentFunction){
         this.currentFunction = currentFunction;
     }
 
@@ -14,6 +15,6 @@ public class CloseIfOperation extends Operation {
             currentFunction.operations.add(this);
             return;
         }
-        LLVMGenerator.closeIf(currentFunction);
+        LLVMGenerator.closeWhile(currentFunction);
     }
 }

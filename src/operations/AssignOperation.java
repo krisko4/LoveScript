@@ -8,6 +8,7 @@ import containers.Function;
 import containers.Value;
 import main.LLVMGenerator;
 import types.OperationType;
+import types.VarType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ public class AssignOperation extends Operation {
     private Block block;
 
 
-
     public AssignOperation(
             Value value,
             Function currentFunction,
@@ -35,7 +35,7 @@ public class AssignOperation extends Operation {
             HelloParser.Assign_stmtContext ctx,
             List<Function> functions,
             Block block
-            ) {
+    ) {
         this.globalMemory = globalMemory;
         this.value = value;
         this.currentFunction = currentFunction;
@@ -53,22 +53,22 @@ public class AssignOperation extends Operation {
             return;
         }
         if (!currentMemory.containsKey(value.variable) && !globalMemory.containsKey(value.variable)) {
-            if(block != null){
+            if (block != null) {
                 value.isGlobal = false;
             }
-            switch (value.type) {
-                case ARRAY:
-                    Array array = new Array(value.variable, value.name);
-                    currentMemory.put(value.variable, array);
-                    return;
-                default:
-                    LLVMGenerator.declare(value.variable, value, currentFunction, block);
-                    LLVMGenerator.assign(value.variable, value, currentFunction, ctx, block);
-                    currentMemory.put(value.variable, value);
-                    return;
+            if (value.type == VarType.ARRAY) {
+                Array array = new Array(value.variable, value.name);
+                currentMemory.put(value.variable, array);
+                return;
             }
+            LLVMGenerator.declare(value.variable, value, currentFunction, block);
+            LLVMGenerator.assign(value.variable, value, currentFunction, ctx, block);
+            currentMemory.put(value.variable, value);
+
+            return;
+
         }
-        if(!currentMemory.containsKey(value.variable)){
+        if (!currentMemory.containsKey(value.variable)) {
             currentMemory.put(value.variable, globalMemory.get(value.variable));
         }
 

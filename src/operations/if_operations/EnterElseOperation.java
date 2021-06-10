@@ -1,7 +1,8 @@
-package operations;
+package operations.if_operations;
 
 import containers.Function;
 import main.LLVMGenerator;
+import operations.Operation;
 
 public class EnterElseOperation extends Operation {
 

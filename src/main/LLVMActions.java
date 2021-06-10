@@ -10,6 +10,16 @@ import containers.Container;
 import containers.Function;
 import containers.Value;
 import operations.*;
+import operations.calc_operations.AddOperation;
+import operations.calc_operations.DivideOperation;
+import operations.calc_operations.MultiplyOperation;
+import operations.calc_operations.SubtractOperation;
+import operations.if_operations.CloseIfOperation;
+import operations.if_operations.EnterIfOperation;
+import operations.if_operations.ExitIfOperation;
+import operations.while_operations.EnterWhileOperation;
+import operations.while_operations.ExitWhileOperation;
+import operations.while_operations.WhileStartOperation;
 import types.VarType;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +46,7 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitPrint_stmt(HelloParser.Print_stmtContext ctx) {
-        new PrintOperation(currentFunction, stack, block).operate(insideFunction);
+        new PrintOperation(currentFunction, stack, block, ctx).operate(insideFunction);
     }
 
 
@@ -50,6 +60,7 @@ public class LLVMActions extends HelloBaseListener {
     public void exitArray_element(HelloParser.Array_elementContext ctx) {
         Array array = (Array) currentMemory.get(ctx.ID().getText());
         Value value = array.values.get(ctx.INT().getText());
+        value.isGlobal = false;
         try {
             String lineNo = LLVMGenerator.load(value.name, value, currentFunction, insideFunction, block);
             stack.push(new Value(lineNo, value.type, value.isGlobal, value.name));

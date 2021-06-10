@@ -1,7 +1,8 @@
-package operations;
+package operations.while_operations;
 
 import containers.Function;
 import main.LLVMGenerator;
+import operations.Operation;
 
 public class EnterWhileOperation extends Operation {
 

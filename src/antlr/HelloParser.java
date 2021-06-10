@@ -42,9 +42,9 @@ public class HelloParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "','", "'while'", null, "'if'", "'else if'", "'else'", "'return'", 
-			"'array'", "'{'", "'}'", "'['", "']'", "'('", "')'", "'(int)'", "'(real)'", 
-			"'/'", "'*'", "':-'", "':+'", null, "'='", "'do'", null, "'wypisz'", 
-			"'odczytaj'"
+			"'couple'", "'{'", "'}'", "'['", "']'", "'('", "')'", "'(int)'", "'(real)'", 
+			"':/'", "':*'", "':('", "':)'", null, "'<3'", "'do'", null, "'flirt'", 
+			"'listen'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();

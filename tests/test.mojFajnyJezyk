@@ -1,15 +1,8 @@
-function(x){
-    while(x<10){
-        x = x :+ 1
-        wypisz x
-    }
-}
 
-function(4)
-x = 32
-if(x<5){
-    return x
-}
+x <3 couple[5]
+x[5] <3 3.5
+x[2] <3 4.5
+flirt x
 
 
 

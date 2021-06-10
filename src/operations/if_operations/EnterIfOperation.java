@@ -1,8 +1,9 @@
-package operations;
+package operations.if_operations;
 
 import containers.Container;
 import containers.Function;
 import main.LLVMGenerator;
+import operations.Operation;
 
 import java.util.HashMap;
 
