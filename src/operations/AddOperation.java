@@ -44,7 +44,10 @@ public class AddOperation extends Operation {
             varType = VarType.INT;
             lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
         }
-        Value value = new Value(lineNo, varType);
+        if(value1.isGlobal || value2.isGlobal){
+
+        }
+        Value value = new Value(lineNo, varType, true, false);
         stack.push(value);
         if (insideFunction) {
             currentFunction.operations.add(this);

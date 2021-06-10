@@ -11,6 +11,7 @@ import types.VarType;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LLVMGenerator {
@@ -22,7 +23,8 @@ public class LLVMGenerator {
     static String function_header = "";
     static String function_text = "";
     static int temp_reg = 1;
-
+    private static int ifCounter = 0;
+    private static int whileCounter = 0;
 
     static String generate() {
         String text = "";
@@ -501,5 +503,91 @@ public class LLVMGenerator {
 
     public static void closeFunction() {
         function_text += "}\n";
+    }
+
+    public static void compare(Value value1, Value value2, String operator, Function currentFunction) {
+        String llvmOperator;
+        switch(operator){
+            case ">":
+                llvmOperator = "sgt";
+                break;
+            case "<":
+                llvmOperator = "slt";
+                break;
+            case "==":
+                llvmOperator = "eq";
+                break;
+            case "<=":
+                llvmOperator = "sle";
+                break;
+            case ">=":
+                llvmOperator = "sge";
+                break;
+            default:
+                throw new RuntimeException("Invalid compare operator");
+        }
+        if(currentFunction != null){
+            function_text += "%" + function_reg + " = icmp " + llvmOperator + " i32 " + value2.name + ", " + value1.name + "\n";
+            function_reg++;
+            return;
+        }
+        main_text += "%" + reg + " = icmp " + llvmOperator + " i32 " + value2.name + ", " + value1.name + "\n";
+        reg++;
+
+    }
+
+
+
+
+    public static void generateIf(Function currentFunction) {
+        ifCounter ++;
+        if(currentFunction != null){
+            function_text += "br i1 %" + (function_reg - 1) + ", label %true" + ifCounter + ", label %false" + ifCounter + "\ntrue" + ifCounter + ":\n";
+            return;
+        }
+        main_text += "br i1 %" + (reg - 1) + ", label %true" + ifCounter + ", label %false" + ifCounter + "\ntrue" + ifCounter + ":\n";
+    }
+
+    public static void closeIf(Function currentFunction) {
+        if(currentFunction != null){
+            function_text += "br label %false" + ifCounter + "\nfalse" + ifCounter + ":\n";
+            return;
+        }
+        main_text += "br label %false" + ifCounter + "\nfalse" + ifCounter + ":\n";
+    }
+
+    public static void generateWhile(Function currentFunction) {
+        if(currentFunction != null){
+            function_text += "br label %whilestart" + whileCounter + "\nwhilestart" + whileCounter + ":\n";
+            return;
+        }
+        main_text += "br label %whilestart" + whileCounter + "\nwhilestart" + whileCounter + ":\n";
+    }
+
+    public static void closeWhile(Function currentFunction) {
+
+        if(currentFunction != null){
+            function_text += "br label %whilestart" + whileCounter + "\n";
+            function_text += "br label %whilefalse" + whileCounter + "\n";
+            function_text += "whilefalse" + whileCounter + ":\n";
+            function_reg++;
+            whileCounter++;
+            return;
+        }
+        main_text += "br label %whilestart" + whileCounter + "\n";
+        main_text += "br label %whilefalse" + whileCounter + "\n";
+        main_text += "whilefalse" + whileCounter + ":\n";
+        reg++;
+        whileCounter++;
+    }
+
+    public static void startWhile(Function currentFunction) {
+        if(currentFunction != null){
+            function_text += "br i1 %" + (function_reg - 1) + ", label %whiletrue" + whileCounter + ", label %whilefalse" + whileCounter + "\n";
+            function_text += "whiletrue" + whileCounter + ":\n";
+            return;
+        }
+        main_text += "br i1 %" + (reg - 1) + ", label %whiletrue" + whileCounter + ", label %whilefalse" + whileCounter + "\n";
+        main_text += "whiletrue" + whileCounter + ":\n";
     }
 }

@@ -23,6 +23,42 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(HelloParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#while_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhile_stmt(HelloParser.While_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#if_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIf_stmt(HelloParser.If_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#while_start}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhile_start(HelloParser.While_startContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#if_start}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIf_start(HelloParser.If_startContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#elseif_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseif_stmt(HelloParser.Elseif_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#else_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElse_stmt(HelloParser.Else_stmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HelloParser#function_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -84,6 +120,13 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSub(HelloParser.SubContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code compare}
+	 * labeled alternative in {@link HelloParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCompare(HelloParser.CompareContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code mul}
 	 * labeled alternative in {@link HelloParser#expression}.

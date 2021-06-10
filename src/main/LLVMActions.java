@@ -58,6 +58,40 @@ public class LLVMActions extends HelloBaseListener {
         LLVMGenerator.function_reg = currentFunction.params.size() + 2;
     }
 
+    @Override
+    public void exitCompare(HelloParser.CompareContext ctx) {
+        //Value value1 = (Value)stack.pop();
+        Value value1 = (Value)stack.pop();
+//        String operator = ctx.COMPARE().getText();
+//        LLVMGenerator.compare(value1, value2, operator);
+        new CompareOperation(value1, currentFunction,stack,ctx).operate(insideFunction);
+
+    }
+
+    @Override
+    public void enterWhile_stmt(HelloParser.While_stmtContext ctx) {
+        new EnterWhileOperation(currentFunction).operate(insideFunction);
+    }
+
+    @Override
+    public void enterWhile_start(HelloParser.While_startContext ctx) {
+        new WhileStartOperation(currentFunction).operate(insideFunction);
+    }
+
+    @Override
+    public void enterIf_start(HelloParser.If_startContext ctx) {
+        new EnterIfOperation(currentFunction).operate(insideFunction);
+    }
+
+    @Override
+    public void exitWhile_stmt(HelloParser.While_stmtContext ctx) {
+        new ExitWhileOperation(currentFunction).operate(insideFunction);
+    }
+
+    @Override
+    public void exitIf_stmt(HelloParser.If_stmtContext ctx) {
+        new ExitIfOperation(currentFunction).operate(insideFunction);
+    }
 
     // Insert function parameters into memory with correct LLVM indices
     @Override

@@ -28,6 +28,66 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitStatement(HelloParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HelloParser#while_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhile_stmt(HelloParser.While_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#while_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhile_stmt(HelloParser.While_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#if_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterIf_stmt(HelloParser.If_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#if_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitIf_stmt(HelloParser.If_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#while_start}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhile_start(HelloParser.While_startContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#while_start}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhile_start(HelloParser.While_startContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#if_start}.
+	 * @param ctx the parse tree
+	 */
+	void enterIf_start(HelloParser.If_startContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#if_start}.
+	 * @param ctx the parse tree
+	 */
+	void exitIf_start(HelloParser.If_startContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#elseif_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterElseif_stmt(HelloParser.Elseif_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#elseif_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitElseif_stmt(HelloParser.Elseif_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#else_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterElse_stmt(HelloParser.Else_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#else_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitElse_stmt(HelloParser.Else_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HelloParser#function_stmt}.
 	 * @param ctx the parse tree
 	 */
@@ -131,6 +191,18 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSub(HelloParser.SubContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code compare}
+	 * labeled alternative in {@link HelloParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompare(HelloParser.CompareContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code compare}
+	 * labeled alternative in {@link HelloParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompare(HelloParser.CompareContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code mul}
 	 * labeled alternative in {@link HelloParser#expression}.

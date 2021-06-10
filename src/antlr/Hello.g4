@@ -9,8 +9,16 @@ statement: print_stmt
            | assign_stmt
            | return_stmt
            | function_stmt
-           | function_call;
+           | function_call
+           | if_stmt
+           | while_stmt;
 
+while_stmt: WHILE OPENBRACKET expression CLOSEBRACKET while_start statement* CLOSEBLOCK;
+if_stmt: IF OPENBRACKET expression CLOSEBRACKET if_start statement* CLOSEBLOCK (elseif_stmt)* (else_stmt)?;
+while_start: OPENBLOCK;
+if_start: OPENBLOCK;
+elseif_stmt: ELSEIF OPENBRACKET expression CLOSEBRACKET OPENBLOCK statement* CLOSEBLOCK;
+else_stmt: ELSE OPENBLOCK statement* CLOSEBLOCK;
 function_stmt:  ID OPENBRACKET function_param?(',' function_param)*  CLOSEBRACKET function_start statement* CLOSEBLOCK;
 function_param: ID;
 function_start: OPENBLOCK;
@@ -26,7 +34,11 @@ expression: val #value
 | expression DIVIDE expression #divide
 | expression MINUS expression #sub
 | expression PLUS expression #add
+| expression COMPARE expression #compare
 ;
+
+
+
 
 array_element: ID OPENARRAY INT CLOSEARRAY;
 val:
@@ -39,6 +51,11 @@ val:
  | TOREAL ID #toreal
  | '(' expression ')' #priorityExpression;
 
+WHILE: 'while';
+COMPARE: '<' | '>' | '<=' | '>=' | '==';
+IF: 'if';
+ELSEIF: 'else if';
+ELSE: 'else';
 RETURN: 'return';
 ARRAY: 'array';
 OPENBLOCK: '{';

@@ -1,13 +1,10 @@
 function(x){
-    x = 5 :+ 5 :+ 4
-    y = 5
+    if(x > 5){
+        wypisz x
+    }
+    x = 6
     return x
 }
 
-x = function(5)
+x = function(10)
 wypisz x
-
-
-
-
-
