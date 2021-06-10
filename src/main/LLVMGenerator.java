@@ -203,9 +203,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    static String multiplyTwoIntegers(String val1, String val2, Function currentFunction) {
+    static String multiplyTwoIntegers(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = mul i32 " + val1 + "," + val2 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = mul i32 " + val1 + "," + val2 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -216,9 +221,15 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    static String multiplyTwoDoubles(String val1, String val2, Function currentFunction) {
+
+    static String multiplyTwoDoubles(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fmul double " + val1 + "," + val2 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fmul double " + val1 + "," + val2 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -229,15 +240,21 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String addIntAndReal(String val, Function currentFunction) {
+    public static String addIntAndReal(String val, Function currentFunction, boolean insideFunction) {
+        String lineNo;
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fadd double " + val + ",%" + (function_reg - 1) + "\n";
-            String lineNo = "%" + function_reg;
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fadd double " + val + ",%" + (function_reg - 1) + "\n";
+            }
+            lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
         }
         main_text += "%" + reg + " = fadd double " + val + ",%" + (reg - 1) + "\n";
-        String lineNo = "%" + reg;
+        lineNo = "%" + reg;
         reg++;
         return lineNo;
     }
@@ -279,9 +296,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String sitofp(String value, Function currentFunction) {
+    public static String sitofp(String value, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = sitofp i32 " + value + " to double\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = sitofp i32 " + value + " to double\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -292,9 +314,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String fptosi(String value, Function currentFunction) {
+    public static String fptosi(String value, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fptosi double " + value + " to i32\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fptosi double " + value + " to i32\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -305,9 +332,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String subIntFromReal(String val, Function currentFunction) {
+    public static String subIntFromReal(String val, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fsub double " + val + ",%" + (function_reg - 1) + "\n";
+            if(insideFunction) {
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fsub double " + val + ",%" + (function_reg - 1) + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -318,9 +350,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String subIntFromReal1(String val, Function currentFunction) {
+    public static String subIntFromReal1(String val, Function currentFunction,  boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fsub double %" + (function_reg - 1) + "," + val + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fsub double %" + (function_reg - 1) + "," + val + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -331,9 +368,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String subIntFromInt(String val1, String val2, Function currentFunction) {
+    public static String subIntFromInt(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = sub i32 " + val1 + "," + val2 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = sub i32 " + val1 + "," + val2 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -344,9 +386,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String subDoubleFromDouble(String val1, String val2, Function currentFunction) {
+    public static String subDoubleFromDouble(String val1, String val2, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fsub double " + val1 + "," + val2 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fsub double " + val1 + "," + val2 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -357,9 +404,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String multiplyIntAndReal(String val, Function currentFunction) {
+    public static String multiplyIntAndReal(String val, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fmul double " + val + ",%" + (function_reg - 1) + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fmul double " + val + ",%" + (function_reg - 1) + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -370,9 +422,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String divideIntAndReal(String val, Function currentFunction) {
+    public static String divideIntAndReal(String val, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fdiv double " + val + "," + "%" + (function_reg - 1) + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fdiv double " + val + "," + "%" + (function_reg - 1) + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -383,9 +440,14 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String divideTwoDoubles(String val2, String val1, Function currentFunction) {
+    public static String divideTwoDoubles(String val2, String val1, Function currentFunction, boolean insideFunction) {
         if (currentFunction != null) {
-            function_text += "%" + function_reg + " = fdiv double " + val2 + "," + val1 + "\n";
+            if(insideFunction){
+                currentFunction.operationCounter++;
+            }
+            else {
+                function_text += "%" + function_reg + " = fdiv double " + val2 + "," + val1 + "\n";
+            }
             String lineNo = "%" + function_reg;
             function_reg++;
             return lineNo;
@@ -396,7 +458,17 @@ public class LLVMGenerator {
         return lineNo;
     }
 
-    public static String divideTwoIntegers() {
+    public static String divideTwoIntegers(Function currentFunction, boolean insideFunction) {
+        if (currentFunction != null) {
+            if (insideFunction) {
+                currentFunction.operationCounter++;
+            } else {
+                function_text += "%" + reg + " = fdiv double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
+            }
+            String lineNo = "%" + function_reg;
+            function_reg++;
+            return lineNo;
+        }
         main_text += "%" + reg + " = fdiv double %" + (reg - 2) + ",%" + (reg - 1) + "\n";
         String lineNo = "%" + reg;
         reg++;
