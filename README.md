@@ -41,7 +41,7 @@ which makes things simple and elegant.
 ```python
 first_variable <3 5
 second_variable <3 5.5
-third_variable <3 'LoveScript is cool!'
+third_variable <3 "LoveScript is cool!"
 ```
 ... and that's it! We have just created three variables, the *first_variable* as an **integer**, the *second_variable* as **float** and the *third_variable* as **string**. In *LoveScript*, a standard boring assign operator has been replaced by sweet *<3* sign.
 
