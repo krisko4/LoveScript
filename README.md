@@ -217,7 +217,7 @@ love()
 flirt(x)
 ===
 Output:
-5
+4
 ```
 ## If statement
 *LoveScript* implements standard **if** statement.
