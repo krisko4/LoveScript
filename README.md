@@ -128,6 +128,17 @@ Output:
 1.5
 1.5
 ```
+## Type casting
+Casting variables to specific type is possible, using *single* and *taken* keywords.
+```python
+x <3 5.5
+y <3 (single)x
+flirt(y)
+===
+Output:
+5
+```
+
 ## Arithmetic operations
 Below you can find a collection of supported arithmetic operators in *LoveScript*.
 
