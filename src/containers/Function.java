@@ -5,19 +5,26 @@ import operations.Operation;
 import types.VarType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 public class Function extends Container {
 
-    public List<Value> params;
+    public List<Variable> params;
     public boolean isDeclared;
-    public String startLine;
     public List<Operation> operations;
     public boolean isConstructed = false;
     public int operationCounter = 0;
-    private Stack stack;
+    private Stack<Container> stack;
     private int index;
+
+    public HashMap<String, Container> getMemory() {
+        return memory;
+    }
+
+    private HashMap<String, Container> memory;
+
     public Function(String name, VarType type, Stack stack, int index) {
         this.params = new ArrayList<>();
         this.name = name;
@@ -27,6 +34,19 @@ public class Function extends Container {
         this.stack = stack;
         this.index = index;
     }
+
+    public Function(String name, VarType type, Stack stack, HashMap<String, Container> memory, int index) {
+        this.params = new ArrayList<>();
+        this.name = name;
+        this.type = type;
+        this.isDeclared = false;
+        this.operations = new ArrayList<>();
+        this.stack = stack;
+        this.index = index;
+        this.memory = memory;
+    }
+
+
 
     public void setIndex(int index) {
         this.index = index;
@@ -38,7 +58,7 @@ public class Function extends Container {
 
     public void generateLLVM(){
 
-      //  LLVMGenerator.function_reg = LLVMGenerator.function_reg - operationCounter;
+
         operations.forEach(operation -> {
             operation.operate(false);
         });

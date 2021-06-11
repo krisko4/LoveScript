@@ -30,22 +30,22 @@ public class AddOperation extends Operation {
     public void operate(boolean insideFunction) {
         VarType varType;
         String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
+        if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
             varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.addIntAndReal(value1.name, currentFunction, insideFunction);
+            if (value1.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.addIntAndReal(value2.getName(), currentFunction, insideFunction);
+            } else if (value2.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.addIntAndReal(value1.getName(), currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.addTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.addTwoDoubles(value1.getName(), value2.getName(), currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.addTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
+            lineNo = LLVMGenerator.addTwoIntegers(value1.getName(), value2.getName(), currentFunction, insideFunction);
         }
-        Value value = new Value(lineNo, varType, true, false);
+        Value value = new Value(lineNo, varType);
         stack.push(value);
         if (insideFunction) {
             currentFunction.operations.add(this);

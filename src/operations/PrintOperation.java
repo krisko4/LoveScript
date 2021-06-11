@@ -38,20 +38,22 @@ public class PrintOperation extends Operation {
         if(container.getClass() == Array.class){
             Array array = (Array)container;
             if(array.values.isEmpty()){
-                throw new RuntimeException("You are trying to print an empty array. Array name: " + array.name  + ". Line: " + ctx.getStart().getLine());
+                throw new RuntimeException("You are trying to print an empty array. Array name: " + array.getName()  + ". Line: " + ctx.getStart().getLine());
             }
             array.values.forEach((key, value) -> {
-                String val = value.name;
-                value.isGlobal = false;
-                value.name = LLVMGenerator.load(value.name, value, currentFunction, insideFunction, block);
-                LLVMGenerator.printf1(value, currentFunction);
-                value.name = val;
+                String val = value.getName();
+               // value.isGlobal = false;
+               // value.name = LLVMGenerator.load(value.name, value, currentFunction, insideFunction, block);
+              //  LLVMGenerator.printf1(value, currentFunction);
+              //  value.name = val;
             });
             return;
         }
         Value value =(Value)container;
         LLVMGenerator.printf1(value, currentFunction);
     }
+
+
 
 
 }

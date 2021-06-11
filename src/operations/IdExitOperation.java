@@ -2,15 +2,13 @@ package operations;
 
 import antlr.HelloParser;
 import blocks.Block;
-import containers.Array;
-import containers.Container;
-import containers.Function;
-import containers.Value;
+import containers.*;
 import main.LLVMGenerator;
 import types.OperationType;
 import types.VarType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -19,8 +17,8 @@ public class IdExitOperation extends Operation {
 
     private Container container;
     private Stack<Container> stack;
-    private Map<String, Container> currentMemory;
-    private Map<String, Container> globalMemory;
+    private HashMap<String, Container> currentMemory;
+    private HashMap<String, Container> globalMemory;
     private HelloParser.IdContext ctx;
     private Block block;
 
@@ -39,31 +37,54 @@ public class IdExitOperation extends Operation {
         this.block = block;
     }
 
+    public IdExitOperation(Function currentFunction, HelloParser.IdContext ctx, Block block) {
+        this.currentFunction = currentFunction;
+        this.ctx = ctx;
+        this.block = block;
+    }
+
+//
+//    public void operate1(boolean insideFunction) {
+//        // undefined
+//        if (!currentMemory.containsKey(ctx.ID().getText()) && !globalMemory.containsKey(ctx.ID().getText())) {
+//            throw new RuntimeException(ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
+//        }
+//        // global variable
+//        if (!currentMemory.containsKey(ctx.ID().getText())) {
+//            currentMemory.put(ctx.ID().getText(), globalMemory.get(ctx.ID().getText()));
+//        }
+//        Container container;
+//        container = currentMemory.get(ctx.ID().getText());
+//        if (container.getClass() == Array.class) {
+//            stack.push(container);
+//            return;
+//        }
+//        Value value = (Value) container;
+//        String lineNo = LLVMGenerator.load(ctx.ID().getText(), value, currentFunction, insideFunction, block);
+//        stack.push(new Value(lineNo, value.type, value.isGlobal, value.isParam, ctx.ID().getText()));
+//        if (insideFunction) {
+//            currentFunction.operations.add(this);
+//        }
+//
+//    }
+
 
     public void operate(boolean insideFunction) {
-        // undefined
-        if (!currentMemory.containsKey(ctx.ID().getText()) && !globalMemory.containsKey(ctx.ID().getText())) {
+        if (!currentMemory.containsKey(ctx.ID().getText())) {
             throw new RuntimeException(ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
         }
-        // global variable
-        if (!currentMemory.containsKey(ctx.ID().getText())) {
-            currentMemory.put(ctx.ID().getText(), globalMemory.get(ctx.ID().getText()));
-        }
-        Container container;
-        container = currentMemory.get(ctx.ID().getText());
-        if (container.getClass() == Array.class) {
-            stack.push(container);
+        if (insideFunction) {
+            Variable variable = (Variable) currentMemory.get(ctx.ID().getText());
+            stack.push(variable.getValue());
+            currentFunction.operations.add(this);
             return;
         }
-        Value value = (Value) container;
-        String lineNo = LLVMGenerator.load(ctx.ID().getText(), value, currentFunction, insideFunction, block);
-        stack.push(new Value(lineNo, value.type, value.isGlobal, value.isParam, ctx.ID().getText()));
-
-        if (insideFunction) {
-            currentFunction.operations.add(this);
-        }
+        Variable variable = (Variable) currentMemory.get(ctx.ID().getText());
+        variable.getValue().setName(LLVMGenerator.load(ctx.ID().getText(), variable, currentFunction, insideFunction, block));
+        stack.push(variable.getValue());
 
     }
+
 }
 
 

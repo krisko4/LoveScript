@@ -29,20 +29,20 @@ public class MultiplyOperation extends Operation {
     public void operate(boolean insideFunction) {
         VarType varType;
         String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
+        if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
             varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.multiplyIntAndReal(value1.name, currentFunction, insideFunction);
+            if (value1.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value2.getName(), currentFunction, insideFunction);
+            } else if (value2.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyIntAndReal(value1.getName(), currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.multiplyTwoDoubles(value1.getName(), value2.getName(), currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.name, value2.name, currentFunction, insideFunction);
+            lineNo = LLVMGenerator.multiplyTwoIntegers(value1.getName(), value2.getName(), currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);

@@ -42,7 +42,7 @@ public class HelloParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "','", "'while'", null, "'if'", "'else if'", "'else'", "'return'", 
-			"'couple'", "'{'", "'}'", "'['", "']'", "'('", "')'", "'(int)'", "'(real)'", 
+			"'couple'", "'{'", "'}'", "'['", "']'", "'('", "')'", "'(single)'", "'(taken)'", 
 			"':/'", "':*'", "':('", "':)'", null, "'<3'", "'do'", null, "'flirt'", 
 			"'listen'"
 		};

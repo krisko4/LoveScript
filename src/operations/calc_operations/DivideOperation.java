@@ -29,19 +29,19 @@ public class DivideOperation extends Operation {
     public void operate(boolean insideFunction) {
         VarType varType = VarType.REAL;
         String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.divideIntAndReal(value1.name, currentFunction, insideFunction);
+        if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
+            if (value1.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.divideIntAndReal(value2.getName(), currentFunction, insideFunction);
+            } else if (value2.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.divideIntAndReal(value1.getName(), currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.divideTwoDoubles(value1.name, value2.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.divideTwoDoubles(value1.getName(), value2.getName(), currentFunction, insideFunction);
             }
         } else {
-            LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-            LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
+            LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+            LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
             lineNo = LLVMGenerator.divideTwoIntegers(currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);

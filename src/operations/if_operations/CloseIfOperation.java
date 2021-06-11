@@ -1,12 +1,16 @@
 package operations.if_operations;
 
+import blocks.IfBlock;
 import containers.Function;
 import main.LLVMGenerator;
 import operations.Operation;
 
 public class CloseIfOperation extends Operation {
 
-    public CloseIfOperation(Function currentFunction){
+    private IfBlock block;
+
+    public CloseIfOperation(Function currentFunction, IfBlock block){
+        this.block = block;
         this.currentFunction = currentFunction;
     }
 

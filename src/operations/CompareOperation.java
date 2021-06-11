@@ -37,13 +37,13 @@ public class CompareOperation extends Operation {
         value2 = (Value) stack.pop();
         String operator = ctx.COMPARE().getText();
         String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
-            if (value1.type == VarType.INT) {
-                lineNo = LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                LLVMGenerator.compareIntAndDouble(lineNo, value2.name, operator, currentFunction);
-            } else if (value2.type == VarType.INT) {
-                lineNo =  LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                LLVMGenerator.compareIntAndDouble(value1.name,lineNo, operator, currentFunction);
+        if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
+            if (value1.getType() == VarType.INT) {
+                lineNo = LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+                LLVMGenerator.compareIntAndDouble(lineNo, value2.getName(), operator, currentFunction);
+            } else if (value2.getType() == VarType.INT) {
+                lineNo =  LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
+                LLVMGenerator.compareIntAndDouble(value1.getName(),lineNo, operator, currentFunction);
             } else {
                 LLVMGenerator.compareTwoDoubles(value1, value2, operator, currentFunction);
             }

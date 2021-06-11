@@ -29,20 +29,20 @@ public class SubtractOperation extends Operation {
     public void operate(boolean insideFunction) {
         VarType varType;
         String lineNo;
-        if (value1.type == VarType.REAL || value2.type == VarType.REAL) {
+        if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
             varType = VarType.REAL;
-            if (value1.type == VarType.INT) {
-                LLVMGenerator.sitofp(value1.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.subIntFromReal(value2.name, currentFunction, insideFunction);
-            } else if (value2.type == VarType.INT) {
-                LLVMGenerator.sitofp(value2.name, currentFunction, insideFunction);
-                lineNo = LLVMGenerator.subIntFromReal1(value1.name, currentFunction, insideFunction);
+            if (value1.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value1.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.subIntFromReal(value2.getName(), currentFunction, insideFunction);
+            } else if (value2.getType() == VarType.INT) {
+                LLVMGenerator.sitofp(value2.getName(), currentFunction, insideFunction);
+                lineNo = LLVMGenerator.subIntFromReal1(value1.getName(), currentFunction, insideFunction);
             } else {
-                lineNo = LLVMGenerator.subDoubleFromDouble(value2.name, value1.name, currentFunction, insideFunction);
+                lineNo = LLVMGenerator.subDoubleFromDouble(value2.getName(), value1.getName(), currentFunction, insideFunction);
             }
         } else {
             varType = VarType.INT;
-            lineNo = LLVMGenerator.subIntFromInt(value2.name, value1.name, currentFunction, insideFunction);
+            lineNo = LLVMGenerator.subIntFromInt(value2.getName(), value1.getName(), currentFunction, insideFunction);
         }
         Value value = new Value(lineNo, varType);
         stack.push(value);
