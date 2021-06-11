@@ -167,10 +167,10 @@ Output:
 Functions can have no arguments and for example modify global variables.
 ```python
 x <3 1
-function(){
+love(){
     x <3 x :) 3
 }
-function()
+love()
 flirt(x)
 ===
 Output:
@@ -247,12 +247,12 @@ Output:
 Loops and statements can also be called inside functions.
 ```python
 x <3 1
-function(){
+love(){
     if(x > 0){
       flirt(x)
     }
 }
-function()
+love()
 ===
 Output:
 1
