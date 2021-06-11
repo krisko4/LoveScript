@@ -18,7 +18,8 @@ LoveScript is a language designed with a goal to provide maximum simplicity and 
 - Arrays
 - Strings 
 - Functions
-- Basic loops such as **if** and **while**
+- **While** loops
+- **If** statements
 
 
 
