@@ -73,6 +73,29 @@ array[6] <3 5.5
 ===
 Error: index 6 exceeds array x size, which is 5. Line: 3
 ```
+### Reading values
+In *LoveScript*, you can get user inputs, using keyword **ask**. This is the only command, which requires type providing in *LoveScript*.
+In order to read integer type, command *ask single* can be used.
+```python
+ask single josh
+flirt(josh)
+===
+Input:
+1
+Output:
+1
+```
+In order to read double type, comand *ask taken* can be used.
+```python
+ask taken josh
+flirt(josh)
+===
+Input:
+1.5
+Output:
+1.5
+```
+
 ### Printing values
 As in every programming language, let's begin with the most basic print operation. Printing in *LoveScript* can be executed using *flirt* keyword:
 ```python
