@@ -31,7 +31,7 @@ The following manual describes the syntax and main features of *LoveScript*.
 
 
 
-## Keywords
+## Let's start <3
 
 Below u can find the main commands used in *LoveScript* syntax.
 
@@ -74,7 +74,14 @@ array[6] <3 5.5
 Error: index 6 exceeds array x size, which is 5. Line: 3
 ```
 ### Printing values
-Printing in *LoveScript* can be executed using *flirt* keyword:
+As in every programming language, let's begin with the most basic print operation. Printing in *LoveScript* can be executed using *flirt* keyword:
+```python
+flirt("Hello world!")
+===
+Output:
+"Hello world!"
+```
+Printing variables is also possible.
 ```python
 flirt(first_variable)
 flirt(second_variable)
