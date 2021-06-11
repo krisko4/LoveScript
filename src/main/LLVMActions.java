@@ -291,7 +291,13 @@ public class LLVMActions extends HelloBaseListener {
                 + " has " + size + " argument/s." +
                 " You are calling " + ctx.expression().size() + " argument/s. Line: " + ctx.getStart().getLine()));
         stack = currentFunction.getStack();
-        LLVMGenerator.function_reg = currentFunction.params.get(currentFunction.params.size() - 1).paramIndex + 1;
+        if(currentFunction.params.size() > 0){
+            LLVMGenerator.function_reg = currentFunction.params.get(currentFunction.params.size() - 1).paramIndex + 1;
+        }
+        else{
+            LLVMGenerator.function_reg = 1;
+        }
+
         insideFunctionCall = true;
 
 

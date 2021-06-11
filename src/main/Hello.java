@@ -14,9 +14,9 @@ public class Hello {
 
     public static void main(String[] args) throws IOException {
 
-       // Path path = Paths.get("./tests/test.mojFajnyJezyk");
+       // Path path = Paths.get("./tests/test.ls");
         //CharStream charStream = CharStreams.fromPath(path);
-        ANTLRFileStream input = new ANTLRFileStream("./tests/test.mojFajnyJezyk");
+        ANTLRFileStream input = new ANTLRFileStream("./tests/test.ls");
         HelloLexer helloLexer = new HelloLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(helloLexer);
         HelloParser helloParser = new HelloParser(tokens);

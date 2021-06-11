@@ -23,7 +23,7 @@ else_stmt: ELSE OPENBLOCK statement* CLOSEBLOCK;
 function_stmt:  ID OPENBRACKET function_param?(',' function_param)*  CLOSEBRACKET function_start statement* CLOSEBLOCK;
 function_param: ID;
 function_start: OPENBLOCK;
-print_stmt: PRINT val | PRINT array_element;
+print_stmt: PRINT OPENBRACKET val CLOSEBRACKET | PRINT OPENBRACKET array_element CLOSEBRACKET;
 read_stmt: READ TYPE TO ID;
 assign_stmt: ID ASSIGN expression
 | ID OPENARRAY INT CLOSEARRAY ASSIGN expression
