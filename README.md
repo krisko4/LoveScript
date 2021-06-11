@@ -158,11 +158,11 @@ Output:
 Below you can find a collection of supported logical comparators in *LoveScript*.
 | Operation | Keyword |
 | ------ | ------ |
-| bigger than | **:)** |
-| smaller than | **:(** |
-| bigger or equal | **:*** |
-| smaller or equal | **:/** |
-| equal | **:/** |
+| bigger than | **>** |
+| smaller than | **<** |
+| bigger or equal | **>=*** |
+| smaller or equal | **<=** |
+| equal | **==** |
 Comparators can be used in *while* and *if* loops, which will be explained later on.
 
 ## Functions
