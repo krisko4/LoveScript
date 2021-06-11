@@ -38,7 +38,7 @@ Below u can find the main commands used in *LoveScript* syntax.
 ### Creating a variable
 Since *LoveScript* is a dynamic language, no types should be provided during variable initialization,
 which makes things simple and elegant.
-```sh
+```python
 first_variable <3 5
 second_variable <3 5.5
 third_variable <3 'LoveScript is cool!'
@@ -48,7 +48,7 @@ third_variable <3 'LoveScript is cool!'
 
 ### Creating an array
 In order to create an array, a simple operation can be used:
-```sh
+```python
 array <3 couple[5]
 ```
 Array creation requires providing a *couple* keyword and an integer size of an array in brackets [].
@@ -56,11 +56,11 @@ The type of an array is not yet specified - it will fit to the first element whi
 
 ### Putting elements inside an array
 In order to put an element inside the array, a simple operation can be used:
-```sh
+```python
 array[1] <3 5.5
 ```
 Now the type of an array is *float*, which means that putting a value of different type inside it will produce an error:
-```sh
+```python
 array[2] <3 3
 ===
 Type mismatch error: array x type is REAL. containers. Value 3 type is INT. Line: 2
@@ -68,14 +68,14 @@ Type mismatch error: array x type is REAL. containers. Value 3 type is INT. Line
 In future versions of *LoveScript*, flexible arrays with different types stored inside them will be available.
 
 Exceeding the array size is also not available and will produce an error:
-```sh
+```python
 array[6] <3 5.5
 ===
 Error: index 6 exceeds array x size, which is 5. Line: 3
 ```
 ### Printing values
 Printing in *LoveScript* can be executed using *flirt* keyword:
-```sh
+```python
 flirt(first_variable)
 flirt(second_variable)
 flirt(third_variable)
@@ -87,7 +87,7 @@ Output:
 "LoveScript is cool!"
 ```
 Printing a whole array or a single element is available:
-```sh
+```python
 array[2] <3 1.5
 flirt(array)
 flirt(array[2])
@@ -109,14 +109,14 @@ Below you can find a collection of supported arithmetic operators in *LoveScript
 
 All expressions are evaluated with respect to arithmetic operation order.
 
-```sh
+```python
 variable <3 5 :) 4 :* 10
 ===
 Output:
 45
 ```
 Setting individual operation order is also available.
-```sh
+```python
 variable <3 (5 :) 4) :* 10
 ===
 Output:
@@ -137,7 +137,7 @@ Comparators can be used in *while* and *if* loops, which will be explained later
 
 ## Functions
 In *LoveScript*, you can conveniently define functions without specifying argument and return types. The function will automatically fit its' return type to an argument.
-```sh
+```python
 love(x){
     flirt(x)
 }
@@ -154,7 +154,7 @@ Output:
 3
 ```
 Functions can also return values, which can be assigned to variables later on.
-```sh
+```python
 love(x){
     return x
 }
@@ -165,7 +165,7 @@ Output:
 5
 ```
 Functions can have no arguments and for example modify global variables.
-```sh
+```python
 x <3 1
 function(){
     x <3 x :) 3
@@ -178,7 +178,7 @@ Output:
 ```
 ## If statement
 *LoveScript* implements standard **if** statement.
-```sh
+```python
 x <3 5
 if(x < 10){
     flirt(x)
@@ -191,7 +191,7 @@ Output:
 5
 ```
 Variables assigned locally in **if** statement are not available in main block.
-```sh
+```python
 x <3 5
 if(x < 10){
     y <3 "hello"
@@ -202,7 +202,7 @@ Error: y is undefined. Line: 5
 ```
 ## While loop
 *LoveScript* implements standard **while** loop.
-```sh
+```python
 x <3 1
 while(x < 5){
     flirt(x)
@@ -216,7 +216,7 @@ Output:
 4
 ```
 Variables assigned locally in **while** loop are not available in main block.
-```sh
+```python
 x <3 1
 while(x < 5){
     flirt(x)
@@ -229,7 +229,7 @@ Error: y is undefined. Line: 7
 ```
 ## Nested operations
 Loops and statements can be nested inside each other.
-```sh
+```python
 x <3 1
 if(x > 0) {
     while(x < 5){
@@ -245,7 +245,7 @@ Output:
 4
 ```
 Loops and statements can also be called inside functions.
-```sh
+```python
 x <3 1
 function(){
     if(x > 0){
