@@ -172,7 +172,7 @@ Below you can find a collection of supported logical comparators in *LoveScript*
 | ------ | ------ |
 | bigger than | **>** |
 | smaller than | **<** |
-| bigger or equal | **>=*** |
+| bigger or equal | **>=** |
 | smaller or equal | **<=** |
 | equal | **==** |
 
