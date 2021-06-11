@@ -163,7 +163,8 @@ Below you can find a collection of supported logical comparators in *LoveScript*
 | bigger or equal | **>=*** |
 | smaller or equal | **<=** |
 | equal | **==** |
-Comparators can be used in *while* and *if* loops, which will be explained later on.
+
+Comparators can be used in *while* and *if* loops, which will be explained later.
 
 ## Functions
 In *LoveScript*, you can conveniently define functions without specifying argument and return types. The function will automatically fit its' return type to an argument.
