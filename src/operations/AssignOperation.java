@@ -132,11 +132,17 @@ public class AssignOperation extends Operation {
             if(!currentMemory.containsKey(variable.getName())){
                 currentMemory.put(variable.getName(), variable);
             }
+            if(variable.isParam()){
+                variable.setValue(value);
+            }
             currentFunction.operations.add(this);
             return;
         }
         if(!currentMemory.containsKey(variable.getName()) ||
                 (currentMemory.containsKey(variable.getName()) && !currentMemory.get(variable.getName()).isAssigned()) ){
+            if(block != null){
+                variable.setGlobal(false);
+            }
             currentMemory.put(variable.getName(), variable);
             LLVMGenerator.declare(variable.getName(), variable, currentFunction, block);
             LLVMGenerator.assign(variable.getName(), variable, currentFunction, ctx, block);

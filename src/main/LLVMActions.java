@@ -80,10 +80,10 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitCompare(HelloParser.CompareContext ctx) {
         //Value value1 = (Value)stack.pop();
-        Value value1 = (Value) stack.pop();
+       // Value value1 = (Value) stack.pop();
 //        String operator = ctx.COMPARE().getText();
 //        LLVMGenerator.compare(value1, value2, operator);
-        new CompareOperation(value1, currentFunction, stack, ctx).operate(insideFunction);
+        new CompareOperation(currentFunction, stack, ctx).operate(insideFunction);
 
     }
 
@@ -96,14 +96,14 @@ public class LLVMActions extends HelloBaseListener {
     public void enterWhile_start(HelloParser.While_startContext ctx) {
         whileBlockNumber++;
         block = new WhileBlock(whileBlockNumber);
-        currentMemory = new HashMap<>();
-        if(currentFunction != null){
-            if(!currentFunction.params.isEmpty()){
-                currentFunction.params.forEach(param -> {
-                    currentMemory.put(param.getName(), param);
-                });
-            }
-        }
+      //  currentMemory = new HashMap<>();
+//        if(currentFunction != null){
+//            if(!currentFunction.params.isEmpty()){
+//                currentFunction.params.forEach(param -> {
+//                    currentMemory.put(param.getName(), param);
+//                });
+//            }
+//        }
         new WhileStartOperation(currentFunction).operate(insideFunction);
     }
 
@@ -111,14 +111,14 @@ public class LLVMActions extends HelloBaseListener {
     public void enterIf_start(HelloParser.If_startContext ctx) {
         ifBlockNumber++;
         block = new IfBlock(ifBlockNumber);
-        currentMemory = new HashMap<>();
-        if(currentFunction != null){
-            if(!currentFunction.params.isEmpty()){
-                currentFunction.params.forEach(param -> {
-                    currentMemory.put(param.getName(), param);
-                });
-            }
-        }
+      //  currentMemory = new HashMap<>();
+//        if(currentFunction != null){
+//            if(!currentFunction.params.isEmpty()){
+//                currentFunction.params.forEach(param -> {
+//                    currentMemory.put(param.getName(), param);
+//                });
+//            }
+//        }
 
         new EnterIfOperation(currentFunction, currentMemory, (IfBlock)block).operate(insideFunction);
     }
@@ -150,6 +150,8 @@ public class LLVMActions extends HelloBaseListener {
         String paramName = ctx.ID().getText();
         Variable variable = new Variable( new Value(null, VarType.UNDEFINED));
         variable.setName(paramName);
+        variable.setParam(true);
+        variable.setAssigned(true);
         currentFunction.params.add(variable);
       //  currentFunction.getMemory().put(paramName, variable);
         currentMemory.put(paramName, variable);
@@ -208,15 +210,16 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitReal(HelloParser.RealContext ctx) {
-        if (insideFunctionCall) {
-            Variable param = currentFunction.params.get(argNo);
-            param.setType(VarType.REAL);
-            param.setName(ctx.REAL().getText());
-            stack.push(param);
-            argNo++;
-            return;
-        }
-        stack.push(new Value(ctx.REAL().getText(), VarType.REAL));
+//        if (insideFunctionCall) {
+//            Variable param = currentFunction.params.get(argNo);
+//            param.setType(VarType.REAL);
+//            param.setName(ctx.REAL().getText());
+//            stack.push(param);
+//            argNo++;
+//            return;
+//        }
+//        stack.push(new Value(ctx.REAL().getText(), VarType.REAL));
+        new ExitRealOperation(currentFunction, stack, ctx, argNo, insideFunctionCall).operate(insideFunction);
     }
 
     @Override
@@ -357,36 +360,30 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitMul(HelloParser.MulContext ctx) {
-        Value value1 = (Value) stack.pop();
-        Value value2 = (Value) stack.pop();
-        new MultiplyOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+        new MultiplyOperation(stack, currentFunction).operate(insideFunction);
 
     }
 
 
     @Override
     public void exitAdd(HelloParser.AddContext ctx) {
-        Value value1 = (Value) stack.pop();
-        Value value2 = (Value) stack.pop();
-        new AddOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+        new AddOperation(stack, currentFunction).operate(insideFunction);
 
     }
 
 
     @Override
     public void exitDivide(HelloParser.DivideContext ctx) {
-        Value value2 = (Value) stack.pop();
-        Value value1 = (Value) stack.pop();
-        new DivideOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+
+        new DivideOperation(stack, currentFunction).operate(insideFunction);
 
     }
 
 
     @Override
     public void exitSub(HelloParser.SubContext ctx) {
-        Value value1 = (Value) stack.pop();
-        Value value2 = (Value) stack.pop();
-        new SubtractOperation(value1, value2, stack, currentFunction).operate(insideFunction);
+
+        new SubtractOperation(stack, currentFunction).operate(insideFunction);
 
     }
 

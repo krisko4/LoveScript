@@ -12,21 +12,21 @@ import java.util.Stack;
 
 public class MultiplyOperation extends Operation {
 
-    private Value value1;
-    private Value value2;
+
     private Stack<Container> stack;
 
 
-    public MultiplyOperation(Value value1, Value value2, Stack<Container> stack, Function currentFunction) {
+    public MultiplyOperation(Stack<Container> stack, Function currentFunction) {
         this.stack = stack;
         this.currentFunction = currentFunction;
         this.operationType = OperationType.ADD;
-        this.value1 = value1;
-        this.value2 = value2;
+
 
     }
 
     public void operate(boolean insideFunction) {
+        Value value1 = (Value) stack.pop();
+        Value value2 = (Value) stack.pop();
         VarType varType;
         String lineNo;
         if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {
