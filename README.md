@@ -139,7 +139,7 @@ Output:
 1.5
 ```
 ## Type casting
-Casting variables to specific type is possible, using *single* and *taken* keywords.
+Casting variables to specific type is possible, using *single* and *taken* keywords. *single* is equivalent to *integer* and *taken* is equivalent to *double*.
 ```python
 x <3 5.5
 y <3 (single)x
