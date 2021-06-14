@@ -188,7 +188,7 @@ Below you can find a collection of supported logical comparators in *LoveScript*
 | ------ | ------ |
 | bigger than | **:>** |
 | smaller than | **:<** |
-| bigger or equal | **:><3=** |
+| bigger or equal | **:><3** |
 | smaller or equal | **:<3** |
 | equal | **<3<3** |
 
@@ -239,7 +239,7 @@ Output:
 *LoveScript* implements standard **if** statement.
 ```python
 x <3 5
-if(x < 10){
+if(x :< 10){
     flirt(x)
 }
 else{
@@ -252,7 +252,7 @@ Output:
 Variables assigned locally in **if** statement are not available in main block.
 ```python
 x <3 5
-if(x < 10){
+if(x :< 10){
     y <3 "hello"
 }
 flirt(y)
@@ -263,7 +263,7 @@ Error: y is undefined. Line: 5
 *LoveScript* implements standard **while** loop.
 ```python
 x <3 1
-while(x < 5){
+while(x :< 5){
     flirt(x)
     x:))
 }
@@ -277,7 +277,7 @@ Output:
 Variables assigned locally in **while** loop are not available in main block.
 ```python
 x <3 1
-while(x < 5){
+while(x :< 5){
     flirt(x)
     x:))
     y <3 5
@@ -290,8 +290,8 @@ Error: y is undefined. Line: 7
 Loops and statements can be nested inside each other.
 ```python
 x <3 1
-if(x > 0) {
-    while(x < 5){
+if(x :> 0) {
+    while(x :< 5){
         flirt(x)
          x:))
     }
@@ -307,7 +307,7 @@ Loops and statements can also be called inside functions.
 ```python
 x <3 1
 love(){
-    if(x > 0){
+    if(x :> 0){
       flirt(x)
     }
 }
