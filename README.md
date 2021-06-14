@@ -217,7 +217,7 @@ Functions can also return values, which can be assigned to variables later on.
 love(x){
     return x
 }
-x = love(5)
+x <3 love(5)
 flirt(x)
 ===
 Output:
