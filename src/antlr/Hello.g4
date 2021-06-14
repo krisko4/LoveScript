@@ -11,8 +11,12 @@ statement: print_stmt
            | function_stmt
            | function_call
            | if_stmt
-           | while_stmt;
+           | while_stmt
+           | increment_stmt
+           | decrement_stmt;
 
+increment_stmt: ID INCREMENT;
+decrement_stmt: ID DECREMENT;
 while_stmt: WHILE OPENBRACKET expression CLOSEBRACKET while_start statement* CLOSEBLOCK;
 if_stmt: IF OPENBRACKET expression CLOSEBRACKET if_start statement* if_end (elseif_stmt)* (else_stmt)?;
 while_start: OPENBLOCK;
@@ -41,6 +45,7 @@ expression: val #value
 
 
 
+
 array_element: ID OPENARRAY INT CLOSEARRAY;
 val:
    ID #id
@@ -52,8 +57,10 @@ val:
  | TOREAL ID #toreal
  | '(' expression ')' #priorityExpression;
 
+DECREMENT: ':((';
+INCREMENT: ':))';
 WHILE: 'while';
-COMPARE: '<' | '>' | '<=' | '>=' | '=='; // < > <= >= ==
+COMPARE: ':<' | ':>' | ':<3' | ':><3' | '<3<3'; // < > <= >= ==
 IF: 'if';
 ELSEIF: 'else if';
 ELSE: 'else';

@@ -23,6 +23,18 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(HelloParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#increment_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrement_stmt(HelloParser.Increment_stmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link HelloParser#decrement_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecrement_stmt(HelloParser.Decrement_stmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link HelloParser#while_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

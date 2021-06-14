@@ -25,6 +25,7 @@ public class AddOperation extends Operation {
     }
 
     public void operate(boolean insideFunction) {
+
         Value value1 = (Value) stack.pop();
         Value value2 = (Value) stack.pop();
         VarType varType;

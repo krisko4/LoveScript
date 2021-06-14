@@ -6,18 +6,18 @@ public class CompareMapper {
         switch(varType){
             case REAL:
                 switch (operator) {
-                    case ">":
+                    case ":>":
                         return "ogt";
-                    case "<":
+                    case ":<":
                         return "olt";
 
-                    case "==":
+                    case "<3<3":
                         return "oeq";
 
-                    case "<=":
+                    case ":<3":
                         return "ole";
 
-                    case ">=":
+                    case ":><3":
                         return "oge";
 
                     default:
@@ -25,18 +25,18 @@ public class CompareMapper {
                 }
             case INT:
                 switch (operator) {
-                    case ">":
+                    case ":>":
                         return "sgt";
-                    case "<":
+                    case ":<":
                         return "slt";
 
-                    case "==":
+                    case "<3<3":
                         return "eq";
 
-                    case "<=":
+                    case ":<3":
                         return "sle";
 
-                    case ">=":
+                    case ":><3":
                         return "sge";
 
                     default:

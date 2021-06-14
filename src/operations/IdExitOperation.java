@@ -18,12 +18,10 @@ public class IdExitOperation extends Operation {
     private Container container;
     private Stack<Container> stack;
     private HashMap<String, Container> currentMemory;
-    private HashMap<String, Container> globalMemory;
     private HelloParser.IdContext ctx;
     private Block block;
 
     public IdExitOperation(HashMap<String, Container> currentMemory,
-                           HashMap<String, Container> globalMemory,
                            Function currentFunction,
                            Stack<Container> stack,
                            HelloParser.IdContext ctx,
@@ -33,7 +31,6 @@ public class IdExitOperation extends Operation {
         this.ctx = ctx;
         this.operationType = OperationType.EXIT_ID;
         this.currentMemory = currentMemory;
-        this.globalMemory = globalMemory;
         this.block = block;
     }
 

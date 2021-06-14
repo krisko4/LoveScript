@@ -50,7 +50,7 @@ public class LLVMActions extends HelloBaseListener {
 
 
 
-        new IdExitOperation(currentMemory, globalMemory, currentFunction, stack, ctx, block).operate(insideFunction);
+        new IdExitOperation(currentMemory, currentFunction, stack, ctx, block).operate(insideFunction);
     }
 
     @Override
@@ -192,33 +192,11 @@ public class LLVMActions extends HelloBaseListener {
 
     @Override
     public void exitInt(HelloParser.IntContext ctx) {
-//        if (insideFunctionCall) {
-//            Variable param = currentFunction.params.get(argNo);
-//            param.getValue().setType(VarType.INT);
-//            param.setParam(true);
-//            param.setName(ctx.INT().getText());
-//          //  currentFunction.getStack().clear();
-//            currentFunction.getStack().push(param.getValue());
-//            currentFunction.getMemory().replace(param.getName(), param);
-//            argNo++;
-//            return;
-//        }
-//        stack.push(new Value(ctx.INT().getText(), VarType.INT));
-////        stack.push(new Value(ctx.INT().getText(), VarType.INT));
         new ExitIntOperation(currentFunction, stack, ctx, argNo, insideFunctionCall).operate(insideFunction);
     }
 
     @Override
     public void exitReal(HelloParser.RealContext ctx) {
-//        if (insideFunctionCall) {
-//            Variable param = currentFunction.params.get(argNo);
-//            param.setType(VarType.REAL);
-//            param.setName(ctx.REAL().getText());
-//            stack.push(param);
-//            argNo++;
-//            return;
-//        }
-//        stack.push(new Value(ctx.REAL().getText(), VarType.REAL));
         new ExitRealOperation(currentFunction, stack, ctx, argNo, insideFunctionCall).operate(insideFunction);
     }
 
@@ -241,10 +219,6 @@ public class LLVMActions extends HelloBaseListener {
                 } else {
                     value = new Value(ID, VarType.REAL);
                 }
-            //    LLVMGenerator.declare(value.getName(), value, currentFunction, block);
-             //   String lineNo = LLVMGenerator.scanf(ID, value.type);
-             //   Value val = new Value(lineNo, value.type);
-             //   currentMemory.put(ID, val);
             }
 
         } catch (NullPointerException nullPointerException) {
@@ -284,7 +258,6 @@ public class LLVMActions extends HelloBaseListener {
         if(foundFunctions.isEmpty()){
             throw new RuntimeException("Function " + ctx.ID().getText() + " is undefined. Line: " + ctx.getStart().getLine());
         }
-
         int paramsNo = foundFunctions.get(0).params.size();
         currentFunction = foundFunctions.stream()
                 .filter(function -> function.params.size() == ctx.expression().size())
@@ -292,8 +265,6 @@ public class LLVMActions extends HelloBaseListener {
                 .orElseThrow(()->new RuntimeException("Arguments quantity mismatch. Function " + ctx.ID().getText()
                 + " has " + paramsNo + " argument/s." +
                 " You are calling " + ctx.expression().size() + " argument/s. Line: " + ctx.getStart().getLine()));
-
-    //    stack = currentFunction.getStack();
 
         if(currentFunction.params.size() > 0){
             LLVMGenerator.function_reg = currentFunction.params.get(currentFunction.params.size() - 1).paramIndex + 1;
@@ -307,54 +278,13 @@ public class LLVMActions extends HelloBaseListener {
     }
 
     @Override
+    public void exitDecrement_stmt(HelloParser.Decrement_stmtContext ctx) {
+        new DecrementOperation(currentMemory, stack, currentFunction, ctx, block).operate(insideFunction);
+    }
+
+    @Override
     public void exitAssign_stmt(HelloParser.Assign_stmtContext ctx) {
-
-
         new AssignOperation(currentFunction, ctx, block, currentMemory, globalMemory, stack).operate(insideFunction);
-
-//
-//        // take value off the stack
-//        Value value = (Value) stack.pop();
-//        // get variable name
-//        String ID = ctx.ID().getText();
-//        // assign variable to value
-//        value.variable = ID;
-//        // if we're in function
-//        if(currentFunction != null){
-//             if(globalMemory.containsKey(ID)){
-//                value.isGlobal = true;
-//            }
-//        }
-//
-//        // if we're not in function, get normal memory reference
-//        else {
-//                if(block == null){
-//                    currentMemory = globalMemory;
-//                    // check if function call is being assigned. If so, our value will be a function
-//                    if (ctx.function_call() != null) {
-//                        Function function = functions.stream()
-//                                .filter(function1 -> function1.name.equals(ctx.function_call().ID().getText()))
-//                                .findFirst()
-//                                .orElseThrow(() -> new RuntimeException("Invalid function call. Line: " + ctx.getStart().getLine()));
-//                        value.type = function.type;
-//                        value.name = function.name;
-//                        value.isGlobal = true;
-//                        value.isParam = false;
-//
-//                    }
-//
-//
-//            }
-//        }
-//        new AssignOperation(value,
-//                currentFunction,
-//                currentMemory,
-//                globalMemory,
-//                stack,
-//                ctx,
-//                functions,
-//                block).operate(insideFunction);
-
     }
 
 
@@ -371,6 +301,10 @@ public class LLVMActions extends HelloBaseListener {
 
     }
 
+    @Override
+    public void exitIncrement_stmt(HelloParser.Increment_stmtContext ctx) {
+        new IncrementOperation(currentMemory, stack, currentFunction, ctx, block).operate(insideFunction);
+    }
 
     @Override
     public void exitDivide(HelloParser.DivideContext ctx) {
@@ -383,7 +317,7 @@ public class LLVMActions extends HelloBaseListener {
     @Override
     public void exitSub(HelloParser.SubContext ctx) {
 
-        new SubtractOperation(stack, currentFunction).operate(insideFunction);
+        new SubtractOperation(stack, currentFunction, false).operate(insideFunction);
 
     }
 

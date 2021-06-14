@@ -134,10 +134,16 @@ public class LLVMGenerator {
     }
 
 
+    public static void increment(String id, Variable variable, Function currentFunction, boolean insideFunction, Block block){
+        load(id, variable, currentFunction, insideFunction, block);
+
+    }
+
+
     public static void assign(String id,
                               Variable variable,
                               Function function,
-                              HelloParser.Assign_stmtContext ctx,
+                              boolean isFunctionCalled,
                               Block block
     ) {
         if(block != null && !variable.isGlobal()){
@@ -173,7 +179,7 @@ public class LLVMGenerator {
             function_text += "store double " + variable.getValue().getName() + ", double* " + pointer + function.getName() + function.getIndex() + "." + id + "\n";
             return;
         }
-        if (ctx.function_call() != null) {
+        if (isFunctionCalled) {
             if (variable.getValue().getType() == VarType.INT) {
                 main_text += "store i32 %" + (reg - 1) + ", i32* " + pointer + id + "\n";
             } else if (variable.getType() == VarType.REAL) {

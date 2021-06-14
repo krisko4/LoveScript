@@ -15,11 +15,11 @@ public class AssignOperation extends Operation {
 
 
     private Value value;
-    private HashMap<String, Container> globalMemory;
     private HashMap<String, Container> currentMemory;
     private Stack<Container> stack;
     private HelloParser.Assign_stmtContext ctx;
     private List<Function> functions;
+    private HashMap<String, Container> globalMemory;
     private Block block;
 
 
@@ -51,7 +51,6 @@ public class AssignOperation extends Operation {
             List<Function> functions,
             Block block
     ) {
-        this.globalMemory = globalMemory;
         this.value = value;
         this.currentFunction = currentFunction;
         this.currentMemory = currentMemory;
@@ -121,6 +120,10 @@ public class AssignOperation extends Operation {
 //    }
 
     public void operate(boolean insideFunction) {
+        boolean isFunctionCalled = false;
+        if(ctx.function_call() != null){
+            isFunctionCalled = true;
+        }
         value = (Value)stack.pop();
         Variable variable = new Variable(value);
         variable.setType(value.getType());
@@ -145,7 +148,7 @@ public class AssignOperation extends Operation {
             }
             currentMemory.put(variable.getName(), variable);
             LLVMGenerator.declare(variable.getName(), variable, currentFunction, block);
-            LLVMGenerator.assign(variable.getName(), variable, currentFunction, ctx, block);
+            LLVMGenerator.assign(variable.getName(), variable, currentFunction, isFunctionCalled, block);
             variable.setAssigned(true);
             return;
         }
@@ -159,7 +162,7 @@ public class AssignOperation extends Operation {
 
             throw new RuntimeException("Mismatched types. Cannot convert " + ((Variable) previousVal).getValue().getType() + " to " + value.getType() + ". Line: " + ctx.getStart().getLine());
         }
-        LLVMGenerator.assign(variable.getName(), variable, currentFunction, ctx, block);
+        LLVMGenerator.assign(variable.getName(), variable, currentFunction, isFunctionCalled, block);
         variable.setAssigned(true);
         currentMemory.replace(variable.getName(), variable);
 

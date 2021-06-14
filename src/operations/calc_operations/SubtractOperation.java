@@ -14,19 +14,29 @@ public class SubtractOperation extends Operation {
 
 
     private Stack<Container> stack;
+    private boolean isDecremented;
 
 
-    public SubtractOperation(Stack<Container> stack, Function currentFunction) {
+    public SubtractOperation(Stack<Container> stack, Function currentFunction, boolean isDecremented) {
         this.stack = stack;
         this.currentFunction = currentFunction;
         this.operationType = OperationType.ADD;
+        this.isDecremented = isDecremented;
 
 
     }
 
     public void operate(boolean insideFunction) {
-        Value value1 = (Value) stack.pop();
-        Value value2 = (Value) stack.pop();
+        Value value1;
+        Value value2;
+        if(isDecremented){
+            value2 = (Value) stack.pop();
+            value1 = (Value) stack.pop();
+        }
+        else{
+            value1 = (Value) stack.pop();
+            value2 = (Value) stack.pop();
+        }
         VarType varType;
         String lineNo;
         if (value1.getType() == VarType.REAL || value2.getType() == VarType.REAL) {

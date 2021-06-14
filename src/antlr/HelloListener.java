@@ -28,6 +28,26 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitStatement(HelloParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HelloParser#increment_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncrement_stmt(HelloParser.Increment_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#increment_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncrement_stmt(HelloParser.Increment_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HelloParser#decrement_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecrement_stmt(HelloParser.Decrement_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#decrement_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecrement_stmt(HelloParser.Decrement_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HelloParser#while_stmt}.
 	 * @param ctx the parse tree
 	 */
