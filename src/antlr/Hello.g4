@@ -83,7 +83,7 @@ ASSIGN : '<3';
 TO : 'do';
 TYPE: 'INT' | 'REAL' | 'STRING';
 PRINT: 'flirt';
-READ: 'listen';
+READ: 'ask';
 NEWLINE: [\r\n] -> skip;
 ID:   [a-zA-Z][a-zA-Z0-9_]*;
 WS : [ \t] -> skip;

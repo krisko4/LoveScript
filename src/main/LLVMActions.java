@@ -214,11 +214,12 @@ public class LLVMActions extends HelloBaseListener {
             String type = ctx.TYPE().getText();
             if (!currentMemory.containsKey(ID)) {
                 Value value;
-                if (type.equals("INT")) {
+                if (type.equals("single")) {
                     value = new Value(ID, VarType.INT);
                 } else {
                     value = new Value(ID, VarType.REAL);
                 }
+                LLVMGenerator.scanf(ID, value.getType());
             }
 
         } catch (NullPointerException nullPointerException) {
