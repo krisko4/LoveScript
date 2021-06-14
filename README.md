@@ -22,7 +22,12 @@ LoveScript is a language designed with a goal to provide maximum simplicity and 
 - **If** statements
 
 
+## How to run *LoveScript* ?
 
+In order to try *LoveScript*, download the source code to your computer. There is already an **antlr** library included in *libs* folder. 
+The only thing you have to do is find the *test.ls* file, write your *LoveScript* code inside it and run the program. As a result,
+*LLVM IR* code will be generated and saved into *test.ll* file. You can either copy the generated *LLVM IR* code and run it using platforms such as http://tio.run,
+or compile the *test.ll* file  using **clang** compiler. 
 
 
 
