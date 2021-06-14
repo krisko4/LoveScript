@@ -165,16 +165,32 @@ Output:
 90
 ```
 
+## Incrementation & decrementation
+
+You can conveniently increment or decrement values using following keywords:
+
+```python
+variable <3 1
+variable:))
+flirt(variable)
+variable:((
+flirt(variable)
+===
+Output:
+2
+1
+```
+
 ## Comparators
 
 Below you can find a collection of supported logical comparators in *LoveScript*.
 | Operation | Keyword |
 | ------ | ------ |
-| bigger than | **>** |
-| smaller than | **<** |
-| bigger or equal | **>=** |
-| smaller or equal | **<=** |
-| equal | **==** |
+| bigger than | **:>** |
+| smaller than | **:<** |
+| bigger or equal | **:><3=** |
+| smaller or equal | **:<3** |
+| equal | **<3<3** |
 
 Comparators can be used in *while* and *if* loops, which will be explained later.
 
@@ -249,7 +265,7 @@ Error: y is undefined. Line: 5
 x <3 1
 while(x < 5){
     flirt(x)
-    x <3 x :) 1
+    x:))
 }
 ===
 Output:
@@ -263,7 +279,7 @@ Variables assigned locally in **while** loop are not available in main block.
 x <3 1
 while(x < 5){
     flirt(x)
-    x <3 x :) 1
+    x:))
     y <3 5
 }
 flirt(y)
@@ -277,7 +293,7 @@ x <3 1
 if(x > 0) {
     while(x < 5){
         flirt(x)
-         x <3 x :) 1
+         x:))
     }
 }
 ===
